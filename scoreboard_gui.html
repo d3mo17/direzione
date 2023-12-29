@@ -1,0 +1,237 @@
+<html>
+  <head>
+    <!--
+      A scoreboard for a martial arts fight. This is the control side from
+      referee table.
+
+      Copyright (C) 2023 Daniel Moritz
+
+      This program is free software: you can redistribute it and/or modify
+      it under the terms of the GNU General Public License as published by
+      the Free Software Foundation, according to version 3 of the License.
+
+      This program is distributed in the hope that it will be useful,
+      but WITHOUT ANY WARRANTY; without even the implied warranty of
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+      GNU General Public License for more details.
+
+      You should have received a copy of the GNU General Public License
+      along with this program. If not, see <https://www.gnu.org/licenses/>.
+    -->
+    <link rel="stylesheet" type="text/css" rel="noopener" href="themes/blue/demo_theme.css">
+    <link rel="stylesheet" type="text/css" rel="noopener" href="themes/blue/scoreboard_gui.css">
+    <script src="node_modules/durata/dist/durata.min.js"></script>
+    <script src="node_modules/peerjs/dist/peerjs.min.js"></script>
+    <script src="node_modules/direzione-lib/dist/direzione-lib.min.js"></script>
+  </head>
+  <body>
+          <div id="scoreboardLayout">
+            <div id="countdown">-:--</div>
+            <div id="countUp" class="center"><span id="countUpSec">0</span>.<span id="countUpMSec">000</span></div>
+
+            <div class="rowWrapper">
+               <div class="name center white opponent"><span id="whiteOpponent" class="middle">&nbsp;</span></div>
+               <div class="name center red opponent"><span id="redOpponent" class="middle">&nbsp;</span></div>
+            </div>
+
+            <div class="rowWrapper scores">
+              <div class="score scoreControlWrapper white">
+                <span class="triangle up"></span>
+                <div id="whiteScore">0</div>
+                <span class="triangle down"></span>
+              </div>
+
+              <div class="shidoControlWrapper white">
+                <div class="triangle up"></div>
+                <div class="shidoBox">
+                  <span class="shidoLabel">Shido</span>
+                  <span id="whiteShido" class="shido">0</span>
+                </div>
+                <div class="triangle down"></div>
+              </div>
+
+              <div class="white opponent placeholder">&nbsp;</div>
+              <div class="red opponent placeholder">&nbsp;</div>
+
+              <div class="shidoControlWrapper red">
+                <div class="triangle up"></div>
+                <div class="shidoBox">
+                  <span class="shidoLabel">Shido</span>
+                  <span id="redShido" class="shido">0</span>
+                </div>
+                <div class="triangle down"></div>
+              </div>
+
+              <div class="score scoreControlWrapper red">
+                <span class="triangle up"></span>
+                <div id="redScore">0</div>
+                <span class="triangle down"></span>
+              </div>
+            </div>
+
+            <div class="rowWrapper">
+               <div class="club center white opponent"><span id="whiteClub" class="middle">&nbsp;</span></div>
+               <div class="club center red opponent"><span id="redClub" class="middle">&nbsp;</span></div>
+            </div>
+          </div>
+
+          <div id="control">
+            <div id="remoteIndicator" class="off">
+              <span class="onLabel">remote board connected</span>
+              <span class="offLabel">remote board disconnected</span>
+            </div>
+
+            <div class="fightlist">
+              <ul id="repertoire">
+                <li id="entryJig">
+                  <span class="white"></span> - <span class="red"></span>
+                </li>
+              </ul>
+            </div>
+          </div>
+  </body>
+
+  <script>
+
+    function FightController(fightView, fight, remoteID) {
+        this[' fight']   = fight
+        this[' emitter'] = Direzione.FightEmitter.create(remoteID, fight)
+
+        fight.getCountdown()
+            && fight.getCountdown().on('stop', fightView.resetView.bind(fightView))
+        this.registerKeyBoardEvents()
+        this.registerUIEvents()
+    }
+    FightController.prototype.registerUIEvents = function () {
+        var remoteIndicator = document.getElementById('remoteIndicator')
+        remoteIndicator.addEventListener('click', function (event) {
+            if (this[' emitter'].isConnected()) {
+              this[' emitter'].disconnect()
+              return
+            }
+
+            this[' emitter'].connect().then(function () {
+              remoteIndicator.className = 'on'
+            }.bind(this))
+        }.bind(this))
+        this[' emitter'].on('disconnect', function () {
+            remoteIndicator.className = 'off'
+        })
+    }
+    FightController.prototype.registerKeyBoardEvents = function () {
+        document.addEventListener('keyup', function(event) {
+        	this[' keylock'] = false
+        }.bind(this))
+      	document.addEventListener('keydown', function(event) {
+            if (this[' keylock']) return
+
+            var white = this[' fight'].getWhiteOpponent()
+            var red   = this[' fight'].getRedOpponent()
+            this[' keylock'] = true
+            switch (event.code) {
+                case 'Escape':      return this[' fight'].reset()
+                case 'Enter':
+                case 'Space':       return this[' fight'].startPauseResume()
+                case 'ArrowLeft':   return this[' fight'].osaeKomi(Direzione.Fight.SIDE_WHITE)
+                case 'ArrowRight':  return this[' fight'].osaeKomi(Direzione.Fight.SIDE_RED)
+                // case 'ArrowDown':   return this[' fight'].osaeKomi(Direzione.Fight.SIDE_CENTER)
+                case 'ArrowUp':     return this[' fight'].toketa()
+                // left warrior
+                case 'KeyQ':        return white.addIppon()
+                case 'KeyW':        return white.addWazari()
+                case 'KeyE':        return white.addShido()
+                case 'KeyA':        return white.removeIppon()
+                case 'KeyS':        return white.removeWazari()
+                case 'KeyD':        return white.removeShido()
+                // right warrior
+                case 'KeyI':        return red.addIppon()
+                case 'KeyO':        return red.addWazari()
+                case 'KeyP':        return red.addShido()
+                case 'KeyK':        return red.removeIppon()
+                case 'KeyL':        return red.removeWazari()
+                case 'Semicolon':   return red.removeShido()
+            }
+        }.bind(this))
+        document.getElementById('scoreboardLayout').addEventListener('click', function (evt) {
+          var half = evt.target.offsetHeight / 2
+
+          var white = this[' fight'].getWhiteOpponent()
+          var red   = this[' fight'].getRedOpponent()
+          switch (evt.target) {
+            case document.querySelector('.shidoControlWrapper.white .up'):   return white.addShido()
+            case document.querySelector('.shidoControlWrapper.white .down'): return white.removeShido()
+            case document.querySelector('.shidoControlWrapper.red .up'):     return red.addShido()
+            case document.querySelector('.shidoControlWrapper.red .down'):   return red.removeShido()
+
+            case document.querySelector('.scoreControlWrapper.white .down'): return white.removeWazari()
+            case document.querySelector('.scoreControlWrapper.red .down'):   return red.removeWazari()
+
+            case document.getElementById('whiteScore'):
+              return evt.offsetY < half ? white.addWazari() : white.removeWazari()
+            case document.getElementById('redScore'):
+              return evt.offsetY < half ? red.addWazari() : red.removeWazari()
+
+            case document.getElementById('countdown'): return this[' fight'].startPauseResume()
+          }
+        }.bind(this))
+
+        // TODO
+        document.querySelector('#repertoire').addEventListener('click', function (evt) {
+          if (typeof evt.target.parentNode.fight !== 'undefined') {
+            this[' fight'] = evt.target.parentNode.fight
+            board.replaceFight(this[' fight'])
+            this[' emitter'].replaceFight(this[' fight'])
+          }
+        }.bind(this))
+    }
+
+    var viewConfig = {
+        outputElemCountdown:             document.getElementById('countdown'),
+        outputElemStopwatchSeconds:      document.getElementById('countUpSec'),
+        outputElemStopwatchMilliseconds: document.getElementById('countUpMSec'),
+        outputElemRedScore:              document.getElementById('redScore'),
+        outputElemWhiteScore:            document.getElementById('whiteScore'),
+        outputElemRedShido:              document.getElementById('redShido'),
+        outputElemWhiteShido:            document.getElementById('whiteShido'),
+        outputElemRedOpponent:           document.getElementById('redOpponent'),
+        outputElemWhiteOpponent:         document.getElementById('whiteOpponent'),
+        outputElemRedClub:               document.getElementById('redClub'),
+        outputElemWhiteClub:             document.getElementById('whiteClub')
+    }
+
+    var whiteOpponent = Direzione.Opponent.create(
+      Direzione.Person.create('John', 'Doe', 'Cheeky Wildcats')
+    );
+    var redOpponent   = Direzione.Opponent.create(
+      Direzione.Person.create('Alexander', 'Randomchewsky', 'Tornado Wanderers')
+    );
+
+    var settings = Direzione.FightSettings.create()
+    var fight    = Direzione.Fight.create(settings, whiteOpponent, redOpponent)
+    var board    = Direzione.Scoreboard.create(fight, viewConfig)
+
+    var TABLE_NUM = 1;
+    new FightController(board, fight, 'refereeTable'+TABLE_NUM);
+
+    var pl = Direzione.Playlist.create()
+    pl.insert(fight)
+
+
+    var whiteOpponent = Direzione.Opponent.create(
+      Direzione.Person.create('Nathalie', 'Smith', 'Stomp Along Mice')
+    );
+    var redOpponent   = Direzione.Opponent.create(
+      Direzione.Person.create('Roberta', 'Hamilton', 'Growling Owls')
+    );
+
+    var fight = Direzione.Fight.create(settings, whiteOpponent, redOpponent)
+    pl.insert(fight)
+
+    var viewConfig = {
+        entryJigElem:     document.getElementById('entryJig'),
+        entryWrapperElem: document.getElementById('repertoire')
+    }
+
+    new Direzione.Repertoire.create(pl, viewConfig)
+  </script>
+</html>

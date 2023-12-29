@@ -1,0 +1,116 @@
+
+#scoreboardLayout {
+  width: 70vw!important;
+}
+
+.white {
+  text-align: left;
+}
+
+.red {
+  text-align: right;
+}
+  span.white, span.red {
+    padding: 3px 5px;
+    line-height: 27px
+  }
+
+  .white.score {
+    border-right: none;
+    color: black;
+    padding-left: 4vw;
+    text-align: center;
+  }
+  
+  .red.score {
+    border-left: none;
+    color: white;
+    padding-right: 4vw;
+    text-align: center;
+  }
+  
+  .white.opponent {
+    border-right: 1px dotted gray!important;
+  }
+  
+  .red.opponent {
+    border-left: 1px dashed red!important;
+  }
+
+  #repertoire {
+    color: yellow;
+    list-style-type: none;
+    padding: 30px;
+    margin: 0;
+  }
+
+  #repertoire li::before {
+    content: "\2022";
+    color: rgba(0,0,0,0);
+    font-weight: bold;
+    display: inline-block;
+    width: 1em;
+    margin-left: -1em;
+  }
+
+  #repertoire li.running::before {
+    color: green;
+  }
+  #repertoire li.completed::before {
+    color: red;
+  }
+
+    #entryJig {
+      display: none;
+    }
+  
+  .shidoBox {
+    margin: 0 !important;
+  }
+
+    .triangle {
+      width: 0;
+      height: 0;
+      border-left: 7vh solid transparent;
+      border-right: 7vh solid transparent;
+      font-size: 0;
+      line-height: 0;
+      margin: 1.5vh 2vh;
+    }
+      .red .triangle {
+        border-top-color: whitesmoke !important;
+        border-bottom-color: whitesmoke !important;
+      }
+
+      .triangle.down {
+        border-top: 1.5vh solid #2f2f2f;
+      }
+      .triangle.up {
+        border-bottom: 1.5vh solid #2f2f2f;
+      }
+
+#control {
+  position: absolute;
+  left: 70vw;
+  top: 0;
+}
+#remoteIndicator {
+  color: floralwhite;
+  width: 30vw;
+  padding: 5px;
+  text-align: center;
+}
+  .on {
+    background-color: green;
+  }
+  .off {
+    background-color: firebrick;
+  }
+    .on .onLabel,
+    .off .offLabel {
+      display: inline;
+    }
+    .off .onLabel,
+    .on .offLabel {
+      display: none;
+    }

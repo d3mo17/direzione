@@ -1,0 +1,32 @@
+
+.white {
+  text-align: right;
+}
+
+.red {
+  text-align: left;
+}
+    
+  .white.opponent {
+    border-left: 1px dotted gray!important;
+  }
+
+  .red.opponent {
+    border-right: 1px dashed red!important;
+  }
+  
+  #whiteScore {
+    border-color: white!important;
+    border-left: none;
+    color: black;
+    padding-right: 4vw;
+    text-align: center;
+  }
+  
+  #redScore {
+    border-color: red!important;
+    border-right: none;
+    color: white;
+    padding-left: 4vw;
+    text-align: center;
+  }

@@ -1,0 +1,83 @@
+<html>
+  <head>
+    <!--
+      A scoreboard for a martial arts fight. This is the view from matting.
+
+      Copyright (C) 2023 Daniel Moritz
+
+      This program is free software: you can redistribute it and/or modify
+      it under the terms of the GNU General Public License as published by
+      the Free Software Foundation, according to version 3 of the License.
+
+      This program is distributed in the hope that it will be useful,
+      but WITHOUT ANY WARRANTY; without even the implied warranty of
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+      GNU General Public License for more details.
+
+      You should have received a copy of the GNU General Public License
+      along with this program. If not, see <https://www.gnu.org/licenses/>.
+    -->
+    <link rel="stylesheet" type="text/css" rel="noopener" href="themes/blue/demo_theme.css">
+    <link rel="stylesheet" type="text/css" rel="noopener" href="themes/blue/remote_scoreboard.css">
+    <script src="node_modules/durata/dist/durata.min.js"></script>
+    <script src="node_modules/peerjs/dist/peerjs.min.js"></script>
+    <script src="node_modules/direzione-lib/dist/direzione-lib.min.js"></script>
+  </head>
+  <body>
+          <div id="scoreboardLayout">
+            <div id="countdown">-:--</div>
+            <div id="countUp" class="center"><span id="countUpSec">0</span>.<span id="countUpMSec">000</span></div>
+
+            <div class="rowWrapper">
+              <div class="name center red opponent"><span id="redOpponent" class="middle">&nbsp;</span></div>
+              <div class="name center white opponent"><span id="whiteOpponent" class="middle">&nbsp;</span></div>
+            </div>
+
+            <div class="rowWrapper scores">
+              <div id="redScore" class="score red">0</div>
+              <div class="red">
+                <div class="shidoBox">
+                  <span class="shidoLabel">Shido</span>
+                  <span id="redShido" class="shido">0</span>
+                </div>
+              </div>
+
+              <div class="red Opponent placeholder">&nbsp;</div>
+              <div class="white Opponent placeholder">&nbsp;</div>
+
+              <div class="white">
+                <div class="shidoBox">
+                  <span class="shidoLabel">Shido</span>
+                  <span id="whiteShido" class="shido">0</span>
+                </div>
+              </div>
+              <div id="whiteScore" class="score white">0</div>
+            </div>
+
+            <div class="rowWrapper">
+              <div class="club center red opponent"><span id="redClub" class="middle">&nbsp;</span></div>
+              <div class="club center white opponent"><span id="whiteClub" class="middle">&nbsp;</span></div>
+            </div>
+          </div>
+  </body>
+
+  <script>
+    var viewConfig = {
+        outputElemCountdown:             document.getElementById('countdown'),
+        outputElemStopwatchSeconds:      document.getElementById('countUpSec'),
+        outputElemStopwatchMilliseconds: document.getElementById('countUpMSec'),
+        outputElemRedScore:              document.getElementById('redScore'),
+        outputElemWhiteScore:            document.getElementById('whiteScore'),
+        outputElemRedShido:              document.getElementById('redShido'),
+        outputElemWhiteShido:            document.getElementById('whiteShido'),
+        outputElemRedOpponent:           document.getElementById('redOpponent'),
+        outputElemWhiteOpponent:         document.getElementById('whiteOpponent'),
+        outputElemRedClub:               document.getElementById('redClub'),
+        outputElemWhiteClub:             document.getElementById('whiteClub')
+    }
+
+    var TABLE_NUM = 1
+
+    Direzione.FightReceiver.create('refereeTable'+TABLE_NUM, viewConfig)
+  </script>
+</html>
