@@ -1,27 +1,38 @@
 {
     "name": "direzione",
     "title": "Direzione",
-    "version": "0.9.2",
+    "version": "0.9.4",
     "description": "A browser based application to manage a martial arts tournament.",
     "repository": {
-      "type": "git",
-      "url": "git+https://github.com/d3mo17/direzione.git"
+        "type": "git",
+        "url": "git+https://github.com/d3mo17/direzione.git"
     },
     "dependencies": {
-      "direzione-lib": "^0.9",
-      "csv-parse": "^5.5.2",
-      "durata": "^1.6.0",
-      "peerjs": "^1.5.1"
+        "@tybys/find-npm-prefix": "^2.0.0",
+        "csv-parse": "^5.5.2",
+        "direzione-lib": "^0.9",
+        "durata": "^1.6.0",
+        "peerjs": "^1.5.1",
+        "yargs": "^17.7.2"
     },
+    "bin": {
+        "direzione-fit": "./bin/fit.js"
+    },
+    "files": [
+        "all_in_one_demo.html",
+        "remote_scoreboard.html",
+        "scoreboard_gui.html",
+        "themes/"
+    ],
     "keywords": [
-      "judo",
-      "fight",
-      "scoreboard"
+        "judo",
+        "fight",
+        "scoreboard"
     ],
     "author": "Daniel Moritz",
     "license": "GPL-3.0",
     "bugs": {
-      "url": "https://github.com/d3mo17/direzione/issues"
+        "url": "https://github.com/d3mo17/direzione/issues"
     },
     "homepage": "https://github.com/d3mo17/direzione"
-  }
+}

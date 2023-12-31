@@ -2,7 +2,7 @@
 # Direzione
 
 A browser based application to manage a martial arts tournament.
-In its early state it can handle a playlist of opponents and displays the scoring by a scoreboard.
+In its early state, it can handle a playlist of opponents and displays the scoring by a scoreboard.
 
 ### Features / Structure / Interface
 
@@ -12,6 +12,7 @@ In its early state it can handle a playlist of opponents and displays the scorin
 
 ```shell
     $ npm install direzione
+    $ npx direzione-fit
 ```
 
 ### API documentation
@@ -20,11 +21,11 @@ In its early state it can handle a playlist of opponents and displays the scorin
 
 ## Scoreboard Example
 
-This example shows how a scoreboard can be controlled by persons sitting at referee table.
+This example shows how a scoreboard can be controlled by persons sitting at the referee table.
 
 ## How to use
 
-First run `npm i` in root directory, to fetch necessary packages.
+It is important to execute all installation steps mentioned above, before direzione is ready to use.
 Open file `scoreboard_gui.html` in a browser window and file `remote_scorboard.html` in another browser window.
 You can also open `all_in_one_demo.html` instead. This file uses frames to load the other two documents in one browser window, so you can see what happens at a glance.
 
