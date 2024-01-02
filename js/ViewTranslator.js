@@ -14,16 +14,27 @@ Direzione.ViewTranslator = (function (Utils, Settings) {
         Utils.loadTranslationJS('lang/' + lang + '.js', _translate.bind(this))
     }
 
-    function _translate(transObj) {
-        Object.keys(this[' selectors']).forEach(function (path) {
-            var selector = this[' selectors'][path]
-            var elements = document.querySelectorAll(selector);
-            var pparts   = path.split('.')
-            var translation = pparts.reduce(function (obj, key) { return obj[key] }, transObj)
+    function _walkDown(value, concatKeys, translationObj) {
+        if (typeof value === "string") {
+            var pparts      = concatKeys.split('.')
+            var translation = pparts.reduce(function (obj, key) { return obj[key] }, translationObj)
 
-            elements.forEach(function (elem) {
+            document.querySelectorAll(value).forEach(function (elem) {
                 elem.innerText = translation
             })
+
+            return
+        }
+
+        if (typeof value === "object" && value !== null && !Array.isArray(value))
+            Object.keys(value).forEach(function (key) {
+                _walkDown(value[key], concatKeys + '.' + key, translationObj)
+            })
+    }
+
+    function _translate(transObj) {
+        Object.keys(this[' selectors']).forEach(function (key) {
+            _walkDown(this[' selectors'][key], key, transObj)
         }, this)
     }
 
