@@ -18,14 +18,15 @@
       You should have received a copy of the GNU General Public License
       along with this program. If not, see <https://www.gnu.org/licenses/>.
     -->
-    <link rel="stylesheet" type="text/css" rel="noopener" href="themes/blue/demo_theme.css">
-    <link rel="stylesheet" type="text/css" rel="noopener" href="themes/blue/scoreboard_gui.css">
+    <link rel="stylesheet" href="themes/blue/theme.css">
+    <link rel="stylesheet" href="themes/blue/scoreboard_gui.css">
     <script src="node_modules/durata/dist/durata.min.js"></script>
     <script src="node_modules/peerjs/dist/peerjs.min.js"></script>
     <script src="node_modules/direzione-lib/dist/direzione-lib.min.js"></script>
     <script src="js/AppSettings.js"></script>
     <script src="js/Controllers.js"></script>
     <script src="js/ViewTranslator.js"></script>
+    <script src="js/ThemeManager.js"></script>
   </head>
   <body>
           <div id="scoreboardLayout">
@@ -127,6 +128,7 @@
     var fight         = Direzione.Fight.create(fightSettings, whiteOpponent, redOpponent)
     var board         = Direzione.Scoreboard.create(fight, viewConfig)
 
+    Direzione.ThemeManager.changeThemeCSSForControlBoard(appSettings.getThemeID())
     Direzione.ViewTranslator.create(appSettings.getLanguage(), translationConfig)
     Direzione.FightController.create(board, fight, appSettings.getCommunicationID());
 
@@ -149,6 +151,6 @@
         entryWrapperElem: document.getElementById('repertoire')
     }
 
-    new Direzione.Repertoire.create(pl, viewConfig)
+    Direzione.Repertoire.create(pl, viewConfig)
   </script>
 </html>

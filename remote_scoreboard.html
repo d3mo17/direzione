@@ -17,12 +17,13 @@
       You should have received a copy of the GNU General Public License
       along with this program. If not, see <https://www.gnu.org/licenses/>.
     -->
-    <link rel="stylesheet" type="text/css" rel="noopener" href="themes/blue/demo_theme.css">
-    <link rel="stylesheet" type="text/css" rel="noopener" href="themes/blue/remote_scoreboard.css">
+    <link rel="stylesheet" href="themes/blue/theme.css">
+    <link rel="stylesheet" href="themes/blue/remote_scoreboard.css">
     <script src="node_modules/durata/dist/durata.min.js"></script>
     <script src="node_modules/peerjs/dist/peerjs.min.js"></script>
     <script src="node_modules/direzione-lib/dist/direzione-lib.min.js"></script>
     <script src="js/AppSettings.js"></script>
+    <script src="js/ThemeManager.js"></script>
   </head>
   <body>
           <div id="scoreboardLayout">
@@ -79,6 +80,7 @@
 
     var appSettings = Direzione.AppSettings.create()
 
+    Direzione.ThemeManager.changeThemeCSSForRemoteBoard(appSettings.getThemeID())
     Direzione.FightReceiver.create(appSettings.getCommunicationID(), viewConfig)
   </script>
 </html>

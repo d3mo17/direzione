@@ -12,8 +12,9 @@ Direzione.AppSettings = (function () {
      * @borrows <anonymous>~_fromStorage as fromStorage
      */
     function AppSettings() {
-        this.communicationID = 'refTab1'
+        this.setCommunicationID('refTab1')
         this.setLanguage('de-DE')
+        this.setThemeID('blue')
         this.fromStorage()
     }
 
@@ -22,6 +23,7 @@ Direzione.AppSettings = (function () {
         fromStorage: _fromStorage,
         getLanguage: function () { return this.language },
         getCommunicationID: function () { return this.communicationID },
+        getThemeID: function () { return this.theme },
         setLanguage: function (lang) {
             if (! LANGUAGES.includes(lang)) {
                 throw RangeError('Language "' + lang + '" not yet supported. Try one of: ' + LANGUAGES.join(', '))
@@ -31,6 +33,10 @@ Direzione.AppSettings = (function () {
         },
         setCommunicationID: function (id) {
             this.communicationID = id
+            return this
+        },
+        setThemeID: function (theme) {
+            this.theme = theme
             return this
         }
     }
