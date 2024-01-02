@@ -25,6 +25,7 @@
     <script src="node_modules/direzione-lib/dist/direzione-lib.min.js"></script>
     <script src="js/AppSettings.js"></script>
     <script src="js/Controllers.js"></script>
+    <script src="js/ViewTranslator.js"></script>
   </head>
   <body>
           <div id="scoreboardLayout">
@@ -109,6 +110,11 @@
         outputElemWhiteClub:             document.getElementById('whiteClub')
     }
 
+    var translationConfig = {
+        'scoreboard.connected':    '#remoteIndicator .onLabel',
+        'scoreboard.disconnected': '#remoteIndicator .offLabel'
+    }
+
     var whiteOpponent = Direzione.Opponent.create(
       Direzione.Person.create('John', 'Doe', 'Cheeky Wildcats')
     );
@@ -121,6 +127,7 @@
     var fight         = Direzione.Fight.create(fightSettings, whiteOpponent, redOpponent)
     var board         = Direzione.Scoreboard.create(fight, viewConfig)
 
+    Direzione.ViewTranslator.create(appSettings.getLanguage(), translationConfig)
     Direzione.FightController.create(board, fight, appSettings.getCommunicationID());
 
     var pl = Direzione.Playlist.create()
