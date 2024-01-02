@@ -22,6 +22,7 @@
         "all_in_one_demo.html",
         "remote_scoreboard.html",
         "scoreboard_gui.html",
+        "js/",
         "themes/"
     ],
     "keywords": [

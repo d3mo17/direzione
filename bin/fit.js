@@ -120,7 +120,7 @@ function createCopies(dirname) {
                   return;
                 }
 
-                const replaced = contents.replaceAll('node_modules/', prefix + '/node_modules/');
+                const replaced = contents.replaceAll('node_modules/', prefix + '/node_modules/')
 
                 fs.writeFile(dirname + '/' + path, replaced, 'utf-8', function (err) {
                     if (err) console.log(err);

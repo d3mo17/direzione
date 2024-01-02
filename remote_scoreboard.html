@@ -22,6 +22,7 @@
     <script src="node_modules/durata/dist/durata.min.js"></script>
     <script src="node_modules/peerjs/dist/peerjs.min.js"></script>
     <script src="node_modules/direzione-lib/dist/direzione-lib.min.js"></script>
+    <script src="js/AppSettings.js"></script>
   </head>
   <body>
           <div id="scoreboardLayout">
@@ -76,8 +77,8 @@
         outputElemWhiteClub:             document.getElementById('whiteClub')
     }
 
-    var TABLE_NUM = 1
+    var appSettings = Direzione.AppSettings.create()
 
-    Direzione.FightReceiver.create('refereeTable'+TABLE_NUM, viewConfig)
+    Direzione.FightReceiver.create(appSettings.getCommunicationID(), viewConfig)
   </script>
 </html>
