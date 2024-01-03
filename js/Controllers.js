@@ -81,7 +81,14 @@ Direzione.FightController = (function (Utils) {
             case document.getElementById('redScore'):
               return evt.offsetY < half ? red.addWazari() : red.removeWazari()
 
-            case document.getElementById('countdown'): return this[' fight'].startPauseResume()
+            case document.querySelector('#countdown .start'):
+              if (this[' fight'].isStopped()) return
+
+              return ! this[' fight'].isRunning() && this[' fight'].startPauseResume()
+            case document.querySelector('#countdown .stop'):
+              if (this[' fight'].isStopped()) return
+
+              return this[' fight'].isRunning() && this[' fight'].startPauseResume()
           }
         }.bind(this))
 

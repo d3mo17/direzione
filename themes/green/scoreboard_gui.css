@@ -1,3 +1,29 @@
+#countdown {
+  display: grid;
+  grid-template-columns: 3fr 5fr 3fr;
+}
+
+  #countdown span.startStop {
+    display: grid;
+    grid-template-rows: 3fr 5fr 1fr 5fr 3fr;
+  }
+
+    #countdown span.startStop img {
+      filter: invert(99%) sepia(73%) saturate(1888%) hue-rotate(19deg) brightness(91%) contrast(72%);
+    }
+
+  #countdown .start {
+    height: 6vh;
+    grid-row-start: 2;
+    grid-row-end: 3;
+    color: orange;
+  }
+
+  #countdown .stop {
+    height: 6vh;
+    grid-row-start: 4;
+    grid-row-end: 5;
+  }
 
 #scoreboardLayout {
   width: 70vw!important;
@@ -16,17 +42,17 @@
     color: white;
     padding-left: 4vw;
   }
-  
+
   .red.score {
     border-left: none;
     color: red;
     padding-right: 4vw;
   }
-  
+
   .white.opponent {
     border-right: 1px dotted gray!important;
   }
-  
+
   .red.opponent {
     border-left: 1px dashed red!important;
   }
@@ -57,7 +83,7 @@
     #entryJig {
       display: none;
     }
-  
+
   .shidoBox {
     margin: 0 !important;
   }
