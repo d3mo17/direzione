@@ -18,8 +18,10 @@
       You should have received a copy of the GNU General Public License
       along with this program. If not, see <https://www.gnu.org/licenses/>.
     -->
+    <meta charset="utf-8">
     <link rel="stylesheet" href="themes/blue/theme.css">
     <link rel="stylesheet" href="themes/blue/scoreboard_gui.css">
+    <link rel="stylesheet" href="themes/blue/settings.css">
     <script src="node_modules/durata/dist/durata.min.js"></script>
     <script src="node_modules/peerjs/dist/peerjs.min.js"></script>
     <script src="node_modules/direzione-lib/dist/direzione-lib.min.js"></script>
@@ -34,8 +36,8 @@
               <span>&nbsp;</span>
               <span class="display">-:--</span>
               <span class="startStop">
-                <img class="start" src="node_modules/feather-icons/dist/icons/play-circle.svg" alt="start"/>
-                <img class="stop" src="node_modules/feather-icons/dist/icons/pause-circle.svg" alt="stop"/>
+                <img class="start" src="node_modules/feather-icons/dist/icons/play-circle.svg" alt="start" />
+                <img class="stop" src="node_modules/feather-icons/dist/icons/pause-circle.svg" alt="stop" />
               </span>
             </div>
             <div id="countUp" class="center"><span id="countUpSec">0</span>.<span id="countUpMSec">000</span></div>
@@ -99,6 +101,43 @@
                 </li>
               </ul>
             </div>
+
+            <div id="menue">
+              <img class="settings" src="node_modules/feather-icons/dist/icons/settings.svg" alt="settings" />
+            </div>
+          </div>
+
+          <div id="settings" style="display:none">
+
+            <img class="close" src="node_modules/feather-icons/dist/icons/x.svg" alt="close" />
+            <h1>Settings</h1>
+
+            <h3 class="general">General</h3>
+            <form>
+              <label for="connID">Connection ID: </label>
+              <input id="connID" type="text" />
+
+              <label for="theme">Theme: </label>
+              <select id="theme">
+                <option value="blue">blue</option>
+                <option value="green">green</option>
+              </select>
+
+              <label for="lang">Language: </label>
+              <select id="lang">
+                <option value="de-DE">deutsch (DE)</option>
+                <option value="en-GB">english (GB)</option>
+              </select>
+            </form>
+
+            <h3 class="scoreboard">Scoreboard</h3>
+            <form>
+              <label for="duration">Duration (ms): </label>
+              <input id="duration" type="text" />
+
+              <label for="countUpLimit">Count UP Limit (ms): </label>
+              <input id="countUpLimit" type="text" />
+            </form>
           </div>
   </body>
 
@@ -115,12 +154,35 @@
         outputElemRedOpponent:           document.getElementById('redOpponent'),
         outputElemWhiteOpponent:         document.getElementById('whiteOpponent'),
         outputElemRedClub:               document.getElementById('redClub'),
-        outputElemWhiteClub:             document.getElementById('whiteClub')
+        outputElemWhiteClub:             document.getElementById('whiteClub'),
+        inputElemCommunicationID:        document.getElementById('connID'),
+        inputElemTheme:                  document.getElementById('theme'),
+        inputElemLanguage:               document.getElementById('lang'),
+        inputElemDuration:               document.getElementById('duration'),
+        inputElemCountUpLimit:           document.getElementById('countUpLimit')
     }
 
     var translationConfig = {
-        'scoreboard.connected':    '#remoteIndicator .onLabel',
-        'scoreboard.disconnected': '#remoteIndicator .offLabel'
+        "settings": {
+            "headline":      "#settings h1",
+            "general":       "#settings .general",
+            "scoreboard":    "#settings .scoreboard",
+            "connection-id": "#settings label[for='connID']",
+            "theme": {
+              "label": "#settings label[for='theme']",
+              "blue":  "#theme [value='blue']",
+              "green": "#theme [value='green']"
+            },
+            "language": {
+              "label": "#settings label[for='lang']"
+            }
+        },
+        "scoreboard": {
+          "connected":     "#remoteIndicator .onLabel",
+          "disconnected":  "#remoteIndicator .offLabel",
+          "duration":      "#settings label[for=duration]",
+          "countup-limit": "#settings label[for=countUpLimit]"
+        }
     }
 
     var whiteOpponent = Direzione.Opponent.create(
@@ -130,14 +192,24 @@
       Direzione.Person.create('Alexander', 'Randomchewsky', 'Tornado Wanderers')
     );
 
-    var appSettings   = Direzione.AppSettings.create()
-    var fightSettings = Direzione.FightSettings.create()
-    var fight         = Direzione.Fight.create(fightSettings, whiteOpponent, redOpponent)
-    var board         = Direzione.Scoreboard.create(fight, viewConfig)
+    var appSettings     = Direzione.AppSettings.create()
+    var fightSettings   = Direzione.FightSettings.create()
+    var fight           = Direzione.Fight.create(fightSettings, whiteOpponent, redOpponent)
+    var board           = Direzione.Scoreboard.create(fight, viewConfig)
+    var fightEmitter    = Direzione.FightEmitter.create(appSettings.getCommunicationID(), fight)
+    var fightController = Direzione.FightController.create(fight);
+
+    var translator      = Direzione.ViewTranslator.create(appSettings.getLanguage(), translationConfig)
 
     Direzione.ThemeManager.changeThemeCSSForControlBoard(appSettings.getThemeID())
-    Direzione.ViewTranslator.create(appSettings.getLanguage(), translationConfig)
-    Direzione.FightController.create(board, fight, appSettings.getCommunicationID());
+    Direzione.SettingsController.create(appSettings, fightSettings, viewConfig, translator)
+    Direzione.ControlPanelController.create(fightEmitter)
+      .on('fightChange', function (cfight) {
+        fight = cfight
+        board.replaceFight(cfight)
+        fightEmitter.replaceFight(cfight)
+        fightController.setFight(cfight)
+      })
 
     var pl = Direzione.Playlist.create()
     pl.insert(fight)

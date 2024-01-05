@@ -107,26 +107,40 @@
 
 #control {
   position: absolute;
+  display: flex;
+  flex-direction: column;
   left: 70vw;
   top: 0;
+  height: 100vh;
 }
-#remoteIndicator {
-  color: floralwhite;
-  width: 30vw;
-  padding: 5px;
-  text-align: center;
-}
-  .on {
-    background-color: green;
+
+  #remoteIndicator {
+    color: floralwhite;
+    width: 30vw;
+    padding: 5px;
+    text-align: center;
   }
-  .off {
-    background-color: firebrick;
-  }
-    .on .onLabel,
-    .off .offLabel {
-      display: inline;
+    .on {
+      background-color: green;
     }
-    .off .onLabel,
-    .on .offLabel {
-      display: none;
+    .off {
+      background-color: firebrick;
+    }
+      .on .onLabel,
+      .off .offLabel {
+        display: inline;
+      }
+      .off .onLabel,
+      .on .offLabel {
+        display: none;
+      }
+
+  #menue {
+    margin-top: auto;
+    text-align: right;
+    padding: 6px 10px;
+    background-color: darkgray;
+  }
+    #menue img.settings {
+      height: 5vh;
     }

@@ -10,6 +10,11 @@ Direzione.ThemeManager = (function () {
         document.head.appendChild(style)
     }
 
+    function _addCommonStyles(themeID) {
+        _addStyleTag(BASE_PATH + themeID + '/theme.css')
+        _addStyleTag(BASE_PATH + themeID + '/settings.css')
+    }
+
     function _removeIncludedCSS() {
         document.querySelectorAll('link[rel="stylesheet"]')
             .forEach(function (el) { el.parentNode.removeChild(el) } )
@@ -19,12 +24,12 @@ Direzione.ThemeManager = (function () {
     return {
         changeThemeCSSForControlBoard: function (themeID) {
             _removeIncludedCSS()
-            _addStyleTag(BASE_PATH + themeID + '/theme.css')
+            _addCommonStyles(themeID)
             _addStyleTag(BASE_PATH + themeID + '/scoreboard_gui.css')
         },
         changeThemeCSSForRemoteBoard: function (themeID) {
             _removeIncludedCSS()
-            _addStyleTag(BASE_PATH + themeID + '/theme.css')
+            _addCommonStyles(themeID)
             _addStyleTag(BASE_PATH + themeID + '/remote_scoreboard.css')
         }
     }

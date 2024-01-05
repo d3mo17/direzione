@@ -1,33 +1,15 @@
 Direzione.FightController = (function (Utils) {
 
-    function FightController(fightView, fight, remoteID) {
-        this[' fight']   = fight
-        this[' emitter'] = Direzione.FightEmitter.create(remoteID, fight)
-
-        fight.getCountdown()
-            && fight.getCountdown().on('stop', fightView.resetView.bind(fightView))
-        this.registerKeyBoardEvents()
-        this.registerUIEvents()
+    function FightController(fight) {
+        this.setFight(fight)
+        _registerKeyBoardEvents.call(this)
     }
 
-    FightController.prototype.registerUIEvents = function () {
-        var remoteIndicator = document.getElementById('remoteIndicator')
-        remoteIndicator.addEventListener('click', function (event) {
-            if (this[' emitter'].isConnected()) {
-              this[' emitter'].disconnect()
-              return
-            }
-
-            this[' emitter'].connect().then(function () {
-              remoteIndicator.className = 'on'
-            }.bind(this))
-        }.bind(this))
-        this[' emitter'].on('disconnect', function () {
-            remoteIndicator.className = 'off'
-        })
+    FightController.prototype.setFight = function (fight) {
+        this[' fight'] = fight
     }
 
-    FightController.prototype.registerKeyBoardEvents = function () {
+    _registerKeyBoardEvents = function () {
         document.addEventListener('keyup', function(event) {
         	this[' keylock'] = false
         }.bind(this))
@@ -91,21 +73,12 @@ Direzione.FightController = (function (Utils) {
               return this[' fight'].isRunning() && this[' fight'].startPauseResume()
           }
         }.bind(this))
-
-        // TODO: Extract to another controller
-        document.querySelector('#repertoire').addEventListener('click', function (evt) {
-          if (typeof evt.target.parentNode.fight !== 'undefined') {
-            this[' fight'] = evt.target.parentNode.fight
-            board.replaceFight(this[' fight'])
-            this[' emitter'].replaceFight(this[' fight'])
-          }
-        }.bind(this))
     }
 
     // Module-API
     return {
         /**
-         * Creates an object to manage settings to the Direzione app
+         * Creates an object to control current selected fight
          *
          * @static
          * @method     create
@@ -117,3 +90,161 @@ Direzione.FightController = (function (Utils) {
         }
     }
 })(Direzione.Utils)
+
+
+Direzione.SettingsController = (function () {
+
+    function SettingsController(appSettings, fightSettings, viewConfig, translator) {
+        this[' appSettings']   = appSettings
+        this[' fightSettings'] = fightSettings
+        this[' translator']    = translator
+        _fillForm.call(this, viewConfig)
+        _registerUIEvents.call(this)
+    }
+
+    function _valueToElem(val, elem) {
+        if (elem.tagName === 'INPUT') {
+            elem.value = val
+        } else if (elem.tagName === 'SELECT') {
+            elem.childNodes.forEach(function (option) {
+                if (option.value === val) {
+                    option.selected = 'selected'
+                    return;
+                }
+            })
+        }
+    }
+
+    function _registerUIEvents () {
+        var appSettings   = this[' appSettings']
+        var fightSettings = this[' fightSettings']
+        var translator    = this[' translator']
+        viewConfig.inputElemCommunicationID.addEventListener('change', function (evt) {
+          appSettings.setCommunicationID(this.value)
+          appSettings.toStorage()
+        })
+        viewConfig.inputElemTheme.addEventListener('change', function (evt) {
+          appSettings.setThemeID(this.value)
+          appSettings.toStorage()
+          Direzione.ThemeManager.changeThemeCSSForControlBoard(appSettings.getThemeID())
+        })
+        viewConfig.inputElemLanguage.addEventListener('change', function (evt) {
+          appSettings.setLanguage(this.value)
+          appSettings.toStorage()
+          translator.setLanguage(this.value)
+        })
+        viewConfig.inputElemDuration.addEventListener('change', function (evt) {
+          fightSettings.setDuration(parseInt(this.value, 10))
+          fightSettings.toStorage()
+        })
+        viewConfig.inputElemCountUpLimit.addEventListener('change', function (evt) {
+          fightSettings.setCountUpLimit(parseInt(this.value, 10))
+          fightSettings.toStorage()
+        })
+    }
+
+    function _fillForm(viewConfig) {
+        _valueToElem(this[' appSettings'].getCommunicationID(), viewConfig.inputElemCommunicationID)
+        _valueToElem(this[' appSettings'].getThemeID(), viewConfig.inputElemTheme)
+        _valueToElem(this[' appSettings'].getLanguage(), viewConfig.inputElemLanguage)
+        _valueToElem(this[' fightSettings'].getDuration(), viewConfig.inputElemDuration)
+        _valueToElem(this[' fightSettings'].getCountUpLimit(), viewConfig.inputElemCountUpLimit)
+    }
+
+    // Module-API
+    return {
+        /**
+         * Creates an object to manage all settings to the Direzione app
+         *
+         * @static
+         * @method     create
+         * @memberof   "Direzione.SettingsController"
+         * @returns    {SettingsController}
+         */
+        create: function (appSettings, fightSettings, viewConfig, translator) {
+            return new SettingsController(appSettings, fightSettings, viewConfig, translator)
+        }
+    }
+})()
+
+
+Direzione.ControlPanelController = (function () {
+
+    function ControlPanelController(fightEmitter) {
+        this[' emitter'] = fightEmitter
+        this[' listener'] = { fightChange: [] }
+        _registerUIEvents.call(this)
+    }
+
+    ControlPanelController.prototype.on = function (type, callback) {
+        var eventTypes = Object.keys(this[' listener'])
+        if (eventTypes.indexOf(type) === -1) {
+            throw new RangeError(
+                'Only following values are allowed for event type: ' + eventTypes.join(', ') + '!'
+            )
+        }
+
+        this[' listener'][type].push(callback)
+
+        return this
+    }
+
+    function _registerUIEvents () {
+        var remoteIndicator = document.getElementById('remoteIndicator')
+        remoteIndicator.addEventListener('click', function (event) {
+            if (this[' emitter'].isConnected()) {
+                this[' emitter'].disconnect()
+                return
+            }
+
+            this[' emitter'].connect().then(function () {
+                remoteIndicator.className = 'on'
+            }.bind(this))
+        }.bind(this))
+        this[' emitter'].on('disconnect', function () {
+            remoteIndicator.className = 'off'
+        })
+
+        document.getElementById('repertoire').addEventListener('click', function (evt) {
+            if (typeof evt.target.parentNode.fight !== 'undefined') {
+                _dispatch.call(this, 'fightChange', evt.target.parentNode.fight)
+            }
+        }.bind(this))
+
+        document.querySelector('#menue .settings').addEventListener('click', function (evt) {
+          document.getElementById('settings').style.display = 'block'
+        }.bind(this))
+
+        document.querySelector('#settings .close').addEventListener('click', function (evt) {
+          document.getElementById('settings').style.display = 'none'
+        }.bind(this))
+    }
+
+    /**
+     * Notifies all listeners of passed event-type.
+     *
+     * @private
+     * @param {String} type
+     * @param {*} data
+     */
+    function _dispatch(type, data) {
+        this[' listener'][type].forEach(function (listener) {
+            listener.call(this, data)
+        }, this)
+    }
+
+    // Module-API
+    return {
+        /**
+         * Creates an object to control the control panel
+         *
+         * @static
+         * @method     create
+         * @memberof   "Direzione.ControlPanelController"
+         * @returns    {ControlPanelController}
+         */
+        create: function (fightEmitter) {
+            return new ControlPanelController(fightEmitter)
+        }
+    }
+})()
