@@ -28,6 +28,13 @@
 #scoreboardLayout {
   width: 70vw!important;
 }
+  #scoreboardLayout img.reset {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    height: 4vh;
+    filter: invert(99%) sepia(73%) saturate(1888%) hue-rotate(19deg) brightness(91%) contrast(72%);
+  }
 
 .white {
   text-align: left;

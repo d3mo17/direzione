@@ -32,6 +32,8 @@
   </head>
   <body>
           <div id="scoreboardLayout">
+            <img class="reset" src="img/clock-reset.svg" alt="settings" />
+
             <div id="countdown">
               <span>&nbsp;</span>
               <span class="display">-:--</span>
@@ -197,9 +199,8 @@
     var fight           = Direzione.Fight.create(fightSettings, whiteOpponent, redOpponent)
     var board           = Direzione.Scoreboard.create(fight, viewConfig)
     var fightEmitter    = Direzione.FightEmitter.create(appSettings.getCommunicationID(), fight)
-    var fightController = Direzione.FightController.create(fight);
-
     var translator      = Direzione.ViewTranslator.create(appSettings.getLanguage(), translationConfig)
+    var fightController = Direzione.FightController.create(fight, translator)
 
     Direzione.ThemeManager.changeThemeCSSForControlBoard(appSettings.getThemeID())
     Direzione.SettingsController.create(appSettings, fightSettings, viewConfig, translator)

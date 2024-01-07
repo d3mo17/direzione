@@ -1,12 +1,19 @@
 Direzione.FightController = (function (Utils) {
 
-    function FightController(fight) {
+    function FightController(fight, translator) {
         this.setFight(fight)
+        this[' translator'] = translator
         _registerKeyBoardEvents.call(this)
     }
 
     FightController.prototype.setFight = function (fight) {
         this[' fight'] = fight
+    }
+
+    function _confirmReset() {
+        if (confirm(this[' translator'].getTranslations().message['confirm-reset'])) {
+            this[' fight'].reset()
+        }
     }
 
     _registerKeyBoardEvents = function () {
@@ -20,7 +27,7 @@ Direzione.FightController = (function (Utils) {
             var red   = this[' fight'].getRedOpponent()
             this[' keylock'] = true
             switch (event.code) {
-                case 'Escape':      return this[' fight'].reset()
+                case 'Escape':      return _confirmReset.call(this)
                 case 'Enter':
                 case 'Space':       return this[' fight'].startPauseResume()
                 case 'ArrowLeft':   return this[' fight'].osaeKomi(Direzione.Fight.SIDE_WHITE)
@@ -63,6 +70,9 @@ Direzione.FightController = (function (Utils) {
             case document.getElementById('redScore'):
               return evt.offsetY < half ? red.addWazari() : red.removeWazari()
 
+            case document.querySelector('img.reset'):
+              return _confirmReset.call(this)
+
             case document.querySelector('#countdown .start'):
               if (this[' fight'].isStopped()) return
 
@@ -85,8 +95,8 @@ Direzione.FightController = (function (Utils) {
          * @memberof   "Direzione.FightController"
          * @returns    {FightController}
          */
-        create: function (fightView, fight, remoteID) {
-            return new FightController(fightView, fight, remoteID)
+        create: function (fight, translationConfig) {
+            return new FightController(fight, translationConfig)
         }
     }
 })(Direzione.Utils)

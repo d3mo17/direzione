@@ -7,6 +7,10 @@ Direzione.ViewTranslator = (function (Utils, Settings) {
         this.setLanguage(lang)
     }
 
+    ViewTranslator.prototype.getTranslations = function() {
+        return this[' translations']
+    }
+
     ViewTranslator.prototype.setLanguage = function (lang) {
         if (! LANGUAGES.includes(lang)) {
             throw RangeError('Language "' + lang + '" not yet supported. Try one of: ' + LANGUAGES.join(', '))
@@ -33,6 +37,7 @@ Direzione.ViewTranslator = (function (Utils, Settings) {
     }
 
     function _translate(transObj) {
+        this[' translations'] = transObj
         Object.keys(this[' selectors']).forEach(function (key) {
             _walkDown(this[' selectors'][key], key, transObj)
         }, this)

@@ -1,4 +1,7 @@
 Direzione.translation = {
+    "message": {
+        "confirm-reset": "Sure? Reset fight?"
+    },
     "settings": {
         "headline": "Settings",
         "general": "General",
