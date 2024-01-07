@@ -82,6 +82,15 @@ Direzione.FightController = (function (Utils) {
             case document.querySelector('img.finish'):
               return _confirmFinish.call(this)
 
+            case document.querySelector('img.toketa'):
+              return this[' fight'].toketa()
+
+            case document.querySelector('img.osaekomi-left'):
+              return this[' fight'].osaeKomi(Direzione.Fight.SIDE_WHITE)
+
+            case document.querySelector('img.osaekomi-right'):
+              return this[' fight'].osaeKomi(Direzione.Fight.SIDE_RED)
+
             case document.querySelector('#countdown .start'):
               if (this[' fight'].isStopped()) return
 

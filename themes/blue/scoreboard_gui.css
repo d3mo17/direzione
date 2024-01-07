@@ -23,17 +23,33 @@
 #scoreboardLayout {
   width: 70vw!important;
 }
-  #scoreboardLayout img.reset {
+  #scoreboardLayout img.absolute {
     position: absolute;
-    top: 20px;
-    left: 20px;
     height: 4vh;
   }
+
+  #scoreboardLayout img.reset {
+    top: 20px;
+    left: 20px;
+  }
   #scoreboardLayout img.finish {
-    position: absolute;
     top: 20px;
     right: calc(30vw + 22px);
-    height: 4vh;
+  }
+  #scoreboardLayout img.toketa {
+    top: calc(30vh + 23px);
+    left: calc(35vw - 2vh);
+    filter: invert(100%) sepia(2%) saturate(112%) hue-rotate(41deg) brightness(117%) contrast(100%);
+  }
+  #scoreboardLayout img.osaekomi-left{
+    top: calc(35vh + 23px);
+    left: calc(35vw - 6vh);
+    filter: invert(100%) sepia(2%) saturate(112%) hue-rotate(41deg) brightness(117%) contrast(100%);
+  }
+  #scoreboardLayout img.osaekomi-right {
+    top: calc(35vh + 23px);
+    left: calc(35vw + 2vh);
+    filter: invert(100%) sepia(2%) saturate(112%) hue-rotate(41deg) brightness(117%) contrast(100%);
   }
 
 .white {
