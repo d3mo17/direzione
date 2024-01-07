@@ -16,6 +16,12 @@ Direzione.FightController = (function (Utils) {
         }
     }
 
+    function _confirmFinish() {
+        if (confirm(this[' translator'].getTranslations().message['confirm-finish'])) {
+            this[' fight'].stop()
+        }
+    }
+
     _registerKeyBoardEvents = function () {
         document.addEventListener('keyup', function(event) {
         	this[' keylock'] = false
@@ -72,6 +78,9 @@ Direzione.FightController = (function (Utils) {
 
             case document.querySelector('img.reset'):
               return _confirmReset.call(this)
+
+            case document.querySelector('img.finish'):
+              return _confirmFinish.call(this)
 
             case document.querySelector('#countdown .start'):
               if (this[' fight'].isStopped()) return

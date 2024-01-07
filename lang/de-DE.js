@@ -1,6 +1,7 @@
 Direzione.translation = {
     "message": {
-        "confirm-reset": "Sicher? Kampf zurücksetzen?"
+        "confirm-reset": "Sicher? Kampf zurücksetzen?",
+        "confirm-finish": "Sicher? Kampf abschließen?"
     },
     "settings": {
         "headline": "Einstellungen",

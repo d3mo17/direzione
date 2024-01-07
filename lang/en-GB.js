@@ -1,6 +1,7 @@
 Direzione.translation = {
     "message": {
-        "confirm-reset": "Sure? Reset fight?"
+        "confirm-reset": "Sure? Reset fight?",
+        "confirm-finish": "Sure? Finish fight?"
     },
     "settings": {
         "headline": "Settings",

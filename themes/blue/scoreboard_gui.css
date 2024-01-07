@@ -29,6 +29,12 @@
     left: 20px;
     height: 4vh;
   }
+  #scoreboardLayout img.finish {
+    position: absolute;
+    top: 20px;
+    right: calc(30vw + 22px);
+    height: 4vh;
+  }
 
 .white {
   text-align: left;
