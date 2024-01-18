@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="themes/blue/theme.css">
     <link rel="stylesheet" href="themes/blue/scoreboard_gui.css">
     <link rel="stylesheet" href="themes/blue/settings.css">
+    <link rel="stylesheet" href="themes/blue/history.css">
     <script src="node_modules/durata/dist/durata.min.js"></script>
     <script src="node_modules/peerjs/dist/peerjs.min.js"></script>
     <script src="node_modules/direzione-lib/dist/direzione-lib.min.js"></script>
@@ -104,6 +105,7 @@
             <div class="fightlist">
               <ul id="repertoire">
                 <li id="entryJig">
+                  <img class="history" src="node_modules/lucide-static/icons/file-clock.svg" alt="history" />
                   <span class="white"></span> - <span class="red"></span>
                 </li>
               </ul>
@@ -113,6 +115,18 @@
               <img class="settings" src="node_modules/lucide-static/icons/settings.svg" alt="settings" />
             </div>
           </div>
+
+
+          <div id="history" style="display:none">
+
+            <img class="close" src="node_modules/lucide-static/icons/x.svg" alt="close" />
+            <h2 id="protocol">Protocol</h2>
+
+            <table id="log">
+              <tr><th class="first">Entry time</th><th class="second">Type</th><th class="third">Info</th></tr>
+            </table>
+          </div>
+
 
           <div id="settings" style="display:none">
 
@@ -199,13 +213,14 @@
       Direzione.Person.create('Alexander', 'Randomchewsky', 'Tornado Wanderers')
     );
 
-    var appSettings     = Direzione.AppSettings.create()
-    var fightSettings   = Direzione.FightSettings.create()
-    var fight           = Direzione.Fight.create(fightSettings, whiteOpponent, redOpponent)
-    var board           = Direzione.Scoreboard.create(fight, viewConfig)
-    var fightEmitter    = Direzione.FightEmitter.create(appSettings.getCommunicationID(), fight)
-    var translator      = Direzione.ViewTranslator.create(appSettings.getLanguage(), translationConfig)
-    var fightController = Direzione.FightController.create(fight, translator)
+    var appSettings       = Direzione.AppSettings.create()
+    var fightSettings     = Direzione.FightSettings.create()
+    var fight             = Direzione.Fight.create(fightSettings, whiteOpponent, redOpponent)
+    var board             = Direzione.Scoreboard.create(fight, viewConfig)
+    var fightEmitter      = Direzione.FightEmitter.create(appSettings.getCommunicationID(), fight)
+    var translator        = Direzione.ViewTranslator.create(appSettings.getLanguage(), translationConfig)
+    var fightController   = Direzione.FightController.create(fight, translator)
+    var historyController = Direzione.HistoryController.create()
 
     Direzione.ThemeManager.changeThemeCSSForControlBoard(appSettings.getThemeID())
     Direzione.SettingsController.create(appSettings, fightSettings, viewConfig, translator)
@@ -215,6 +230,9 @@
         board.replaceFight(cfight)
         fightEmitter.replaceFight(cfight)
         fightController.setFight(cfight)
+      })
+      .on('fightHistoryTrigger', function (fight) {
+        historyController.setFight(fight).show()
       })
 
     var pl = Direzione.Playlist.create()

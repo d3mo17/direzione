@@ -61,6 +61,9 @@
 .red {
   text-align: right;
 }
+    span.white, span.red {
+      padding: 3px 5px;
+    }
 
   .white.score {
     border-right: none;
@@ -107,6 +110,11 @@
 
     #entryJig {
       display: none;
+    }
+
+    #repertoire img.history {
+      vertical-align: middle;
+      filter: invert(99%) sepia(73%) saturate(1888%) hue-rotate(19deg) brightness(91%) contrast(72%);
     }
 
   .shidoBox {

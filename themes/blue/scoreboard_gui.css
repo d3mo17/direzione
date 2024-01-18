@@ -61,7 +61,7 @@
 }
   span.white, span.red {
     padding: 3px 5px;
-    line-height: 27px
+    line-height: 27px;
   }
 
   .white.score {
@@ -111,6 +111,11 @@
 
     #entryJig {
       display: none;
+    }
+
+    #repertoire img.history {
+      vertical-align: middle;
+      filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(247deg) brightness(103%) contrast(101%);
     }
 
   .shidoBox {

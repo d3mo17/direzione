@@ -13,6 +13,7 @@ Direzione.ThemeManager = (function () {
     function _addCommonStyles(themeID) {
         _addStyleTag(BASE_PATH + themeID + '/theme.css')
         _addStyleTag(BASE_PATH + themeID + '/settings.css')
+        _addStyleTag(BASE_PATH + themeID + '/history.css')
     }
 
     function _removeIncludedCSS() {

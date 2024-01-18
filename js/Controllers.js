@@ -200,7 +200,7 @@ Direzione.ControlPanelController = (function () {
 
     function ControlPanelController(fightEmitter) {
         this[' emitter'] = fightEmitter
-        this[' listener'] = { fightChange: [] }
+        this[' listener'] = { fightChange: [], fightHistoryTrigger: [] }
         _registerUIEvents.call(this)
     }
 
@@ -235,6 +235,11 @@ Direzione.ControlPanelController = (function () {
 
         document.getElementById('repertoire').addEventListener('click', function (evt) {
             if (typeof evt.target.parentNode.fight !== 'undefined') {
+                if (evt.target.matches('img.history')) {
+                    _dispatch.call(this, 'fightHistoryTrigger', evt.target.parentNode.fight)
+                    return
+                }
+
                 _dispatch.call(this, 'fightChange', evt.target.parentNode.fight)
             }
         }.bind(this))
@@ -273,6 +278,43 @@ Direzione.ControlPanelController = (function () {
          */
         create: function (fightEmitter) {
             return new ControlPanelController(fightEmitter)
+        }
+    }
+})()
+
+Direzione.HistoryController = (function () {
+
+    function HistoryController() {
+        _registerUIEvents.call(this)
+    }
+
+    HistoryController.prototype.setFight = function (fight) {
+        this[' fight'] = fight
+        return this
+    }
+
+    HistoryController.prototype.show = function() {
+        document.getElementById('history').style.display = 'block'
+    }
+
+    function _registerUIEvents () {
+        document.querySelector('#history .close').addEventListener('click', function (evt) {
+            document.getElementById('history').style.display = 'none'
+        }.bind(this))
+    }
+
+    // Module-API
+    return {
+        /**
+         * Creates an object to control the view of the fight histories
+         *
+         * @static
+         * @method     create
+         * @memberof   "Direzione.HistoryController"
+         * @returns    {HistoryController}
+         */
+        create: function (fightEmitter) {
+            return new HistoryController(fightEmitter)
         }
     }
 })()
