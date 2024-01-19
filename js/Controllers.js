@@ -282,9 +282,10 @@ Direzione.ControlPanelController = (function () {
     }
 })()
 
-Direzione.HistoryController = (function () {
+Direzione.HistoryController = (function (Utils) {
 
-    function HistoryController() {
+    function HistoryController(appSettings) {
+        this[' settings'] = appSettings
         _registerUIEvents.call(this)
     }
 
@@ -294,7 +295,45 @@ Direzione.HistoryController = (function () {
     }
 
     HistoryController.prototype.show = function() {
-        document.getElementById('history').style.display = 'block'
+        var dialog = document.getElementById('history')
+        var log    = dialog.querySelector('#log')
+        var topt   = {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hourCycle: "h24"
+        }
+
+        log.querySelectorAll('tr:has(td)').forEach(function (row) {
+            log.removeChild(row)
+        })
+
+        this[' fight'].getHistory().getLog().forEach(function (row) {
+            var rowElem = document.createElement('tr')
+
+            var cellElem = document.createElement('td')
+            cellElem.innerText = Number.isInteger(row[0])
+                ? (new Date(row[0])).toLocaleDateString(this[' settings'].getLanguage(), topt) : row[0]
+            rowElem.appendChild(cellElem)
+
+            cellElem = document.createElement('td')
+            cellElem.innerText = row[1]
+            rowElem.appendChild(cellElem)
+
+            cellElem = document.createElement('td')
+            cellElem.innerText = ! Number.isInteger(row[2]) ? row[2] :
+                row[1] === 'toketa'
+                    ? (Math.floor(row[2] / 1000)%60)+'.'+(Math.floor(row[2]%1000)+'').padStart(3,'0')
+                    : Utils.getMinSecDisplay(row[2])
+            rowElem.appendChild(cellElem)
+
+            log.appendChild(rowElem)
+        }, this)
+
+        dialog.style.display = 'block'
     }
 
     function _registerUIEvents () {
@@ -313,8 +352,8 @@ Direzione.HistoryController = (function () {
          * @memberof   "Direzione.HistoryController"
          * @returns    {HistoryController}
          */
-        create: function (fightEmitter) {
-            return new HistoryController(fightEmitter)
+        create: function (appSettings) {
+            return new HistoryController(appSettings)
         }
     }
-})()
+})(Direzione.Utils)

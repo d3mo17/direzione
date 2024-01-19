@@ -220,7 +220,7 @@
     var fightEmitter      = Direzione.FightEmitter.create(appSettings.getCommunicationID(), fight)
     var translator        = Direzione.ViewTranslator.create(appSettings.getLanguage(), translationConfig)
     var fightController   = Direzione.FightController.create(fight, translator)
-    var historyController = Direzione.HistoryController.create()
+    var historyController = Direzione.HistoryController.create(appSettings)
 
     Direzione.ThemeManager.changeThemeCSSForControlBoard(appSettings.getThemeID())
     Direzione.SettingsController.create(appSettings, fightSettings, viewConfig, translator)
