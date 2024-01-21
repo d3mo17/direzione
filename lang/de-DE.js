@@ -15,7 +15,8 @@ Direzione.translation = {
         },
         "language": {
           "label": "Sprache: "
-        }
+        },
+        "lock-out": "Pause für Kämpfer vor dem nächsten Kampf (ms): "
     },
     "scoreboard": {
         "disconnected":  "Fernanzeige entkoppelt",

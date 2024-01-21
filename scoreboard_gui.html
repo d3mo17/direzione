@@ -106,7 +106,8 @@
               <ul id="repertoire">
                 <li id="entryJig">
                   <img class="history" src="node_modules/lucide-static/icons/file-clock.svg" alt="history" />
-                  <span class="white"></span> - <span class="red"></span>
+                  <span class="white"></span><span class="white lockOut">-:--</span> -
+                  <span class="red"></span><span class="red lockOut">-:--</span>
                 </li>
               </ul>
             </div>
@@ -133,22 +134,28 @@
             <img class="close" src="node_modules/lucide-static/icons/x.svg" alt="close" />
             <h1>Settings</h1>
 
-            <h3 class="general">General</h3>
+            <h3 id="h_general">General</h3>
             <form>
+
               <label for="connID">Connection ID: </label>
               <input id="connID" type="text" />
 
-              <label for="theme">Theme: </label>
-              <select id="theme">
-                <option value="blue">blue</option>
-                <option value="green">green</option>
-              </select>
+              <label for="lockOut">Lock-out for opponents (ms): </label>
+              <input id="lockOut" type="text" />
 
-              <label for="lang">Language: </label>
-              <select id="lang">
-                <option value="de-DE">deutsch (DE)</option>
-                <option value="en-GB">english (GB)</option>
-              </select>
+              <div>
+                <label for="theme">Theme: </label>
+                <select id="theme">
+                  <option value="blue">blue</option>
+                  <option value="green">green</option>
+                </select>
+
+                <label for="lang">Language: </label>
+                <select id="lang">
+                  <option value="de-DE">deutsch (DE)</option>
+                  <option value="en-GB">english (GB)</option>
+                </select>
+              </div>
             </form>
 
             <h3 class="scoreboard">Scoreboard</h3>
@@ -180,13 +187,14 @@
         inputElemTheme:                  document.getElementById('theme'),
         inputElemLanguage:               document.getElementById('lang'),
         inputElemDuration:               document.getElementById('duration'),
-        inputElemCountUpLimit:           document.getElementById('countUpLimit')
+        inputElemCountUpLimit:           document.getElementById('countUpLimit'),
+        inputElemLockOut:                document.getElementById('lockOut')
     }
 
     var translationConfig = {
         "settings": {
             "headline":      "#settings h1",
-            "general":       "#settings .general",
+            "general":       "#h_general",
             "scoreboard":    "#settings .scoreboard",
             "connection-id": "#settings label[for='connID']",
             "theme": {
@@ -196,7 +204,8 @@
             },
             "language": {
               "label": "#settings label[for='lang']"
-            }
+            },
+            "lock-out":        "#settings label[for='lockOut']"
         },
         "scoreboard": {
           "connected":     "#remoteIndicator .onLabel",
@@ -206,12 +215,15 @@
         }
     }
 
-    var whiteOpponent = Direzione.Opponent.create(
-      Direzione.Person.create('John', 'Doe', 'Cheeky Wildcats')
-    );
-    var redOpponent   = Direzione.Opponent.create(
-      Direzione.Person.create('Alexander', 'Randomchewsky', 'Tornado Wanderers')
-    );
+    var persons = [
+      Direzione.Person.create('John', 'Doe', 'Cheeky Wildcats'),
+      Direzione.Person.create('Alexander', 'Randomchewsky', 'Tornado Wanderers'),
+      Direzione.Person.create('Nathalie', 'Smith', 'Stomp Along Mice'),
+      Direzione.Person.create('Roberta', 'Hamilton', 'Growling Owls')
+    ]
+
+    var whiteOpponent = Direzione.Opponent.create(persons[0])
+    var redOpponent   = Direzione.Opponent.create(persons[1])
 
     var appSettings       = Direzione.AppSettings.create()
     var fightSettings     = Direzione.FightSettings.create()
@@ -239,19 +251,29 @@
     pl.insert(fight)
 
 
-    var whiteOpponent = Direzione.Opponent.create(
-      Direzione.Person.create('Nathalie', 'Smith', 'Stomp Along Mice')
-    );
-    var redOpponent   = Direzione.Opponent.create(
-      Direzione.Person.create('Roberta', 'Hamilton', 'Growling Owls')
-    );
+    var whiteOpponent = Direzione.Opponent.create(persons[2])
+    var redOpponent   = Direzione.Opponent.create(persons[3])
+
+    var fight = Direzione.Fight.create(fightSettings, whiteOpponent, redOpponent)
+    pl.insert(fight)
+
+    var whiteOpponent = Direzione.Opponent.create(persons[1])
+    var redOpponent   = Direzione.Opponent.create(persons[3])
+
+    var fight = Direzione.Fight.create(fightSettings, whiteOpponent, redOpponent)
+    pl.insert(fight)
+
+    var whiteOpponent = Direzione.Opponent.create(persons[0])
+    var redOpponent   = Direzione.Opponent.create(persons[2])
 
     var fight = Direzione.Fight.create(fightSettings, whiteOpponent, redOpponent)
     pl.insert(fight)
 
     var viewConfig = {
         entryJigElem:     document.getElementById('entryJig'),
-        entryWrapperElem: document.getElementById('repertoire')
+        entryWrapperElem: document.getElementById('repertoire'),
+        selectorWhiteOpponentLockOut: '.white.lockOut',
+        selectorRedOpponentLockOut:   '.red.lockOut'
     }
 
     Direzione.Repertoire.create(pl, viewConfig)

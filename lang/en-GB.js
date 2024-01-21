@@ -15,7 +15,8 @@ Direzione.translation = {
         },
         "language": {
           "label": "Language: "
-        }
+        },
+        "lock-out": "Lock-out for opponents (ms): "
     },
     "scoreboard": {
         "disconnected":  "remote board disconnected",
