@@ -23,5 +23,11 @@ Direzione.translation = {
         "connected":     "Fernanzeige verbunden",
         "duration":      "Kampfdauer (ms)",
         "countup-limit": "Haltegriffdauer (ms)"
+    },
+    "history": {
+      "headline": "Protokoll",
+      "entryTime": "Zeit d. Eintrags",
+      "entryType": "Typ",
+      "entryInfo": "Info"
     }
 }

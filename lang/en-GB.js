@@ -23,5 +23,11 @@ Direzione.translation = {
         "connected":     "remote board connected",
         "duration":      "Duration of fight (ms)",
         "countup-limit": "Duration of grip (ms)"
+    },
+    "history": {
+      "headline": "Protocol",
+      "entryTime": "Time of entry",
+      "entryType": "Type",
+      "entryInfo": "Info"
     }
 }
