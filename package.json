@@ -1,7 +1,7 @@
 {
     "name": "direzione",
     "title": "Direzione",
-    "version": "0.16.4",
+    "version": "0.17.0",
     "description": "A browser based application to manage a martial arts tournament.",
     "repository": {
         "type": "git",
