@@ -170,10 +170,14 @@
 
   #menue {
     margin-top: auto;
-    text-align: right;
     padding: 6px 10px;
     background-color: darkgray;
   }
-    #menue img.settings {
+    #menue img.settings,
+    #menue img.opponents {
       height: 5vh;
+    }
+
+    #menue img.opponents {
+      float: right;
     }

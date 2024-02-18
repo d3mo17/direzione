@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="themes/blue/scoreboard_gui.css">
     <link rel="stylesheet" href="themes/blue/settings.css">
     <link rel="stylesheet" href="themes/blue/history.css">
+    <link rel="stylesheet" href="themes/blue/groups.css">
     <script src="node_modules/durata/dist/durata.min.js"></script>
     <script src="node_modules/peerjs/dist/peerjs.min.js"></script>
     <script src="node_modules/direzione-lib/dist/direzione-lib.min.js"></script>
@@ -114,6 +115,7 @@
 
             <div id="menue">
               <img class="settings" src="node_modules/lucide-static/icons/settings.svg" alt="settings" />
+              <img class="opponents" src="node_modules/lucide-static/icons/users.svg" alt="opponents" />
             </div>
           </div>
 
@@ -167,6 +169,21 @@
               <input id="countUpLimit" type="text" />
             </form>
           </div>
+
+          <div id="groups" style="display:none">
+
+            <img class="close" src="node_modules/lucide-static/icons/x.svg" alt="close" />
+            <h1>Groups</h1>
+            <form>
+              <label for="groupName">Group name: </label>
+              <input id="groupName" type="text" />
+              <button id="addGroup">add</button>
+            </form>
+
+            <table id="groupJig" style="display: none">
+              <caption>Group name</caption>
+            </table>
+          </div>
   </body>
 
   <script>
@@ -218,6 +235,11 @@
           "entryTime": "#history #log .first",
           "entryType": "#history #log .second",
           "entryInfo": "#history #log .third"
+        },
+        "groups": {
+          "headline": "#groups h1",
+          "groupName": "#groups label[for=groupName]",
+          "addButton": "#groups #addGroup"
         }
     }
 
@@ -253,6 +275,11 @@
         historyController.setFight(fight).show()
       })
 
+    var viewConfig = {
+        entryJigElem: document.getElementById('groupJig')
+    }
+    Direzione.OpponentsController.create(viewConfig);
+
     var pl = Direzione.Playlist.create()
     pl.insert(fight)
 
@@ -275,7 +302,7 @@
     var fight = Direzione.Fight.create(fightSettings, whiteOpponent, redOpponent)
     pl.insert(fight)
 
-    var viewConfig = {
+    viewConfig = {
         entryJigElem:     document.getElementById('entryJig'),
         entryWrapperElem: document.getElementById('repertoire'),
         selectorWhiteOpponentLockOut: '.white.lockOut',

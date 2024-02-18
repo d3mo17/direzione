@@ -1,0 +1,21 @@
+#groups {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    bottom: 10px;
+    right: 10px;
+    z-index: 100;
+    background-color: gray;
+    padding: 0 20px;
+}
+
+    #groups input {
+        caret-color: black !important;
+    }
+
+    #groups .close {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        height: 5vh;
+    }

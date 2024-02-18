@@ -29,5 +29,10 @@ Direzione.translation = {
       "entryTime": "Time of entry",
       "entryType": "Type",
       "entryInfo": "Info"
+    },
+    "groups": {
+      "headline": "Groups",
+      "groupName": "Group name: ",
+      "addButton": "add"
     }
 }

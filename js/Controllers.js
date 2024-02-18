@@ -362,3 +362,66 @@ Direzione.HistoryController = (function (Utils) {
         }
     }
 })(Direzione.Utils)
+
+
+Direzione.OpponentsController = (function (OpponentGroup) {
+
+    /**
+     * @param {Object} viewConfig
+     */
+    function OpponentsController(viewConfig) {
+        this[' entryJig'] = viewConfig.entryJigElem.cloneNode(true)
+        viewConfig.entryJigElem.remove();
+
+        _registerUIEvents.call(this)
+    }
+
+    function _createGroup(name) {
+        OpponentGroup.create(name)
+    }
+
+    function _registerUIEvents () {
+        document.getElementById('addGroup').addEventListener('click', function (evt) {
+            _createGroup.call(this, document.getElementById('groupName'))
+        }.bind(this))
+
+        document.querySelector('#menue .opponents').addEventListener('click', function (evt) {
+          document.getElementById('groups').style.display = 'block'
+        }.bind(this))
+
+        document.querySelector('#groups .close').addEventListener('click', function (evt) {
+          document.getElementById('groups').style.display = 'none'
+        }.bind(this))
+    }
+
+    /**
+     * Notifies all listeners of passed event-type.
+     *
+     * @private
+     * @param {String} type
+     * @param {*} data
+     */
+    function _dispatch(type, data) {
+        this[' listener'][type].forEach(function (listener) {
+            listener.call(this, data)
+        }, this)
+    }
+
+    // Module-API
+    return {
+        /**
+         * Creates an object to control the control panel
+         *
+         * @static
+         * @method     create
+         *
+         * @param      {Object}   viewConfig
+         *
+         * @memberof   "Direzione.OpponentsController"
+         * @returns    {OpponentsController}
+         */
+        create: function (viewConfig) {
+            return new OpponentsController(viewConfig)
+        }
+    }
+})(Direzione.OpponentGroup)
