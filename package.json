@@ -1,7 +1,7 @@
 {
     "name": "direzione",
     "title": "Direzione",
-    "version": "0.17.0",
+    "version": "0.18.0",
     "description": "A browser based application to manage a martial arts tournament.",
     "repository": {
         "type": "git",
@@ -10,7 +10,7 @@
     "dependencies": {
         "@tybys/find-npm-prefix": "^2.0.0",
         "csv-parse": "^5.5.2",
-        "direzione-lib": "^0.14",
+        "direzione-lib": "^0.15",
         "durata": "^1.6.0",
         "lucide-static": "^0.312.0",
         "peerjs": "^1.5.1",

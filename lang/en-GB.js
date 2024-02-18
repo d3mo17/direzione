@@ -19,10 +19,11 @@ Direzione.translation = {
         "lock-out": "Lock-out for opponents (ms): "
     },
     "scoreboard": {
-        "disconnected":  "remote board disconnected",
-        "connected":     "remote board connected",
-        "duration":      "Duration of fight (ms)",
-        "countup-limit": "Duration of grip (ms)"
+        "disconnected":        "remote board disconnected",
+        "connected":           "remote board connected",
+        "duration":            "Duration of fight (ms)",
+        "countup-limit":       "Duration of grip resulting in wazari (ms)",
+        "countup-limit-ippon": "Duration of grip resulting in ippon (ms)"
     },
     "history": {
       "headline": "Protocol",

@@ -19,10 +19,11 @@ Direzione.translation = {
         "lock-out": "Pause für Kämpfer vor dem nächsten Kampf (ms): "
     },
     "scoreboard": {
-        "disconnected":  "Fernanzeige entkoppelt",
-        "connected":     "Fernanzeige verbunden",
-        "duration":      "Kampfdauer (ms)",
-        "countup-limit": "Haltegriffdauer (ms)"
+        "disconnected":        "Fernanzeige entkoppelt",
+        "connected":           "Fernanzeige verbunden",
+        "duration":            "Kampfdauer (ms)",
+        "countup-limit":       "Haltegriffdauer für Wazari (ms)",
+        "countup-limit-ippon": "Haltegriffdauer für Ippon (ms)"
     },
     "history": {
       "headline": "Protokoll",

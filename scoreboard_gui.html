@@ -160,11 +160,20 @@
 
             <h3 class="scoreboard">Scoreboard</h3>
             <form>
-              <label for="duration">Duration (ms): </label>
-              <input id="duration" type="text" />
+              <div>
+                <label for="duration">Duration (ms): </label>
+                <input id="duration" type="text" />
+              </div>
 
-              <label for="countUpLimit">Count UP Limit (ms): </label>
-              <input id="countUpLimit" type="text" />
+              <div>
+                <label for="countUpLimit">Count UP Limit Wazari (ms): </label>
+                <input id="countUpLimit" type="text" />
+              </div>
+
+              <div>
+                <label for="countUpLimitIppon">Count UP Limit Ippon (ms): </label>
+                <input id="countUpLimitIppon" type="text" />
+              </div>
             </form>
           </div>
   </body>
@@ -188,6 +197,7 @@
         inputElemLanguage:               document.getElementById('lang'),
         inputElemDuration:               document.getElementById('duration'),
         inputElemCountUpLimit:           document.getElementById('countUpLimit'),
+        inputElemCountUpLimitIppon:      document.getElementById('countUpLimitIppon'),
         inputElemLockOut:                document.getElementById('lockOut')
     }
 
@@ -208,10 +218,11 @@
             "lock-out":        "#settings label[for='lockOut']"
         },
         "scoreboard": {
-          "connected":     "#remoteIndicator .onLabel",
-          "disconnected":  "#remoteIndicator .offLabel",
-          "duration":      "#settings label[for=duration]",
-          "countup-limit": "#settings label[for=countUpLimit]"
+          "connected":           "#remoteIndicator .onLabel",
+          "disconnected":        "#remoteIndicator .offLabel",
+          "duration":            "#settings label[for=duration]",
+          "countup-limit":       "#settings label[for=countUpLimit]",
+          "countup-limit-ippon": "#settings label[for=countUpLimitIppon]"
         },
         "history": {
           "headline": "#history #protocol",

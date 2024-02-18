@@ -169,6 +169,10 @@ Direzione.SettingsController = (function () {
           fightSettings.setCountUpLimit(parseInt(this.value, 10))
           fightSettings.toStorage()
         })
+        viewConfig.inputElemCountUpLimitIppon.addEventListener('change', function (evt) {
+          fightSettings.setCountUpLimitIppon(parseInt(this.value, 10))
+          fightSettings.toStorage()
+        })
         viewConfig.inputElemLockOut.addEventListener('change', function (evt) {
           fightSettings.setLockOutTime(parseInt(this.value, 10))
           fightSettings.toStorage()
@@ -181,6 +185,7 @@ Direzione.SettingsController = (function () {
         _valueToElem(this[' appSettings'].getLanguage(), viewConfig.inputElemLanguage)
         _valueToElem(this[' fightSettings'].getDuration(), viewConfig.inputElemDuration)
         _valueToElem(this[' fightSettings'].getCountUpLimit(), viewConfig.inputElemCountUpLimit)
+        _valueToElem(this[' fightSettings'].getCountUpLimitIppon(), viewConfig.inputElemCountUpLimitIppon)
         _valueToElem(this[' fightSettings'].getLockOutTime(), viewConfig.inputElemLockOut)
     }
 
