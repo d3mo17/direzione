@@ -1,3 +1,7 @@
+Direzione.State = {
+    keyControlScoreboard: true
+}
+
 Direzione.FightController = (function (Utils) {
 
     function FightController(fight, translator) {
@@ -27,7 +31,7 @@ Direzione.FightController = (function (Utils) {
         	this[' keylock'] = false
         }.bind(this))
       	document.addEventListener('keydown', function(event) {
-            if (this[' keylock']) return
+            if (this[' keylock'] || !Direzione.State.keyControlScoreboard) return
 
             var white = this[' fight'].getWhiteOpponent()
             var red   = this[' fight'].getRedOpponent()
@@ -255,11 +259,17 @@ Direzione.ControlPanelController = (function () {
         }.bind(this))
 
         document.querySelector('#menue .settings').addEventListener('click', function (evt) {
-          document.getElementById('settings').style.display = 'block'
+            document.getElementById('settings').style.display = 'block'
+            Direzione.State.keyControlScoreboard = false
+            if (this[' emitter'].isConnected()) {
+                this[' emitter'].disconnect()
+                return
+            }
         }.bind(this))
 
         document.querySelector('#settings .close').addEventListener('click', function (evt) {
           document.getElementById('settings').style.display = 'none'
+          Direzione.State.keyControlScoreboard = true
         }.bind(this))
     }
 
