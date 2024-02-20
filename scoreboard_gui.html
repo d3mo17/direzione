@@ -161,6 +161,16 @@
             <h3 class="scoreboard">Scoreboard</h3>
             <form>
               <div>
+                <input id="invertGripSide" type="checkbox" />
+                <label for="invertGripSide">Invert side evaluation for count up</label>
+              </div>
+
+              <div>
+                <input id="invertGripDisplay" type="checkbox" />
+                <label for="invertGripDisplay">Invert side display for count up</label>
+              </div>
+
+              <div>
                 <label for="duration">Duration (ms): </label>
                 <input id="duration" type="text" />
               </div>
@@ -198,7 +208,9 @@
         inputElemDuration:               document.getElementById('duration'),
         inputElemCountUpLimit:           document.getElementById('countUpLimit'),
         inputElemCountUpLimitIppon:      document.getElementById('countUpLimitIppon'),
-        inputElemLockOut:                document.getElementById('lockOut')
+        inputElemLockOut:                document.getElementById('lockOut'),
+        inputElemInvertGripSide:         document.getElementById('invertGripSide'),
+        inputElemInvertGripDisplay:      document.getElementById('invertGripDisplay')
     }
 
     var translationConfig = {
@@ -222,7 +234,9 @@
           "disconnected":        "#remoteIndicator .offLabel",
           "duration":            "#settings label[for=duration]",
           "countup-limit":       "#settings label[for=countUpLimit]",
-          "countup-limit-ippon": "#settings label[for=countUpLimitIppon]"
+          "countup-limit-ippon": "#settings label[for=countUpLimitIppon]",
+          "invert-grip-side":    "#settings label[for=invertGripSide]",
+          "invert-grip-display": "#settings label[for=invertGripDisplay]"
         },
         "history": {
           "headline": "#history #protocol",

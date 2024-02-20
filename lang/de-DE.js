@@ -23,7 +23,9 @@ Direzione.translation = {
         "connected":           "Fernanzeige verbunden",
         "duration":            "Kampfdauer (ms)",
         "countup-limit":       "Haltegriffdauer für Wazari (ms)",
-        "countup-limit-ippon": "Haltegriffdauer für Ippon (ms)"
+        "countup-limit-ippon": "Haltegriffdauer für Ippon (ms)",
+        "invert-grip-side":    "Entgegengesetzte Auswertung für den Haltegriff",
+        "invert-grip-display": "Entgegengesetzte Anzeige für den Haltegriff"
     },
     "history": {
       "headline": "Protokoll",

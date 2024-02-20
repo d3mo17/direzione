@@ -23,7 +23,9 @@ Direzione.translation = {
         "connected":           "remote board connected",
         "duration":            "Duration of fight (ms)",
         "countup-limit":       "Duration of grip resulting in wazari (ms)",
-        "countup-limit-ippon": "Duration of grip resulting in ippon (ms)"
+        "countup-limit-ippon": "Duration of grip resulting in ippon (ms)",
+        "invert-grip-side":    "Invert side evaluation for count up",
+        "invert-grip-display": "Invert side display for count up"
     },
     "history": {
       "headline": "Protocol",

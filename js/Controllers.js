@@ -136,7 +136,11 @@ Direzione.SettingsController = (function () {
 
     function _valueToElem(val, elem) {
         if (elem.tagName === 'INPUT') {
-            elem.value = val
+            if (elem.type === 'checkbox') {
+                elem.checked = val
+            } else {
+                elem.value = val
+            }
         } else if (elem.tagName === 'SELECT') {
             elem.childNodes.forEach(function (option) {
                 if (option.value === val) {
@@ -181,6 +185,14 @@ Direzione.SettingsController = (function () {
           fightSettings.setLockOutTime(parseInt(this.value, 10))
           fightSettings.toStorage()
         })
+        viewConfig.inputElemInvertGripSide.addEventListener('change', function (evt) {
+          fightSettings.setGripSideInverted(this.checked)
+          fightSettings.toStorage()
+        })
+        viewConfig.inputElemInvertGripDisplay.addEventListener('change', function (evt) {
+          fightSettings.setGripDisplayInverted(this.checked)
+          fightSettings.toStorage()
+        })
     }
 
     function _fillForm(viewConfig) {
@@ -191,6 +203,8 @@ Direzione.SettingsController = (function () {
         _valueToElem(this[' fightSettings'].getCountUpLimit(), viewConfig.inputElemCountUpLimit)
         _valueToElem(this[' fightSettings'].getCountUpLimitIppon(), viewConfig.inputElemCountUpLimitIppon)
         _valueToElem(this[' fightSettings'].getLockOutTime(), viewConfig.inputElemLockOut)
+        _valueToElem(this[' fightSettings'].isGripSideInverted(), viewConfig.inputElemInvertGripSide)
+        _valueToElem(this[' fightSettings'].isGripDisplayInverted(), viewConfig.inputElemInvertGripDisplay)
     }
 
     // Module-API
