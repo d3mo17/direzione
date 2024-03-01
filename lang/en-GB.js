@@ -1,7 +1,8 @@
 Direzione.translation = {
     "message": {
         "confirm-reset": "Sure? Reset fight?",
-        "confirm-finish": "Sure? Finish fight?"
+        "confirm-finish": "Sure? Finish fight?",
+        "alert-no-control-during-fight": "Only control of running fight is possible!"
     },
     "settings": {
         "headline": "Settings",

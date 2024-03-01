@@ -4,25 +4,23 @@ Direzione.State = {
 
 Direzione.FightController = (function (Utils) {
 
-    function FightController(fight, translator) {
-        this.setFight(fight)
-        this[' translator'] = translator
+    // todo: use fightemitter instead of fight ...
+    // check connection to remote scoreboard before starting fight
+    function FightController(fightEmitter, translator) {
+        this[' fightEmitter'] = fightEmitter
+        this[' translator']   = translator
         _registerKeyBoardEvents.call(this)
-    }
-
-    FightController.prototype.setFight = function (fight) {
-        this[' fight'] = fight
     }
 
     function _confirmReset() {
         if (confirm(this[' translator'].getTranslations().message['confirm-reset'])) {
-            this[' fight'].reset()
+            this[' fightEmitter'].getFight().reset()
         }
     }
 
     function _confirmFinish() {
         if (confirm(this[' translator'].getTranslations().message['confirm-finish'])) {
-            this[' fight'].stop()
+            this[' fightEmitter'].getFight().stop()
         }
     }
 
@@ -33,17 +31,19 @@ Direzione.FightController = (function (Utils) {
       	document.addEventListener('keydown', function(event) {
             if (this[' keylock'] || !Direzione.State.keyControlScoreboard) return
 
-            var white = this[' fight'].getWhiteOpponent()
-            var red   = this[' fight'].getRedOpponent()
+            var fight = this[' fightEmitter'].getFight()
+
+            var white = fight.getWhiteOpponent()
+            var red   = fight.getRedOpponent()
             this[' keylock'] = true
             switch (event.code) {
                 case 'Escape':      return _confirmReset.call(this)
                 case 'Enter':
-                case 'Space':       return this[' fight'].startPauseResume()
-                case 'ArrowLeft':   return this[' fight'].osaeKomi(Direzione.Fight.SIDE_WHITE)
-                case 'ArrowRight':  return this[' fight'].osaeKomi(Direzione.Fight.SIDE_RED)
-                // case 'ArrowDown':   return this[' fight'].osaeKomi(Direzione.Fight.SIDE_CENTER)
-                case 'ArrowUp':     return this[' fight'].toketa()
+                case 'Space':       return fight.startPauseResume()
+                case 'ArrowLeft':   return fight.osaeKomi(Direzione.Fight.SIDE_WHITE)
+                case 'ArrowRight':  return fight.osaeKomi(Direzione.Fight.SIDE_RED)
+                // case 'ArrowDown':   return fight.osaeKomi(Direzione.Fight.SIDE_CENTER)
+                case 'ArrowUp':     return fight.toketa()
                 // left warrior
                 case 'KeyQ':        return white.addIppon()
                 case 'KeyW':        return white.addWazari()
@@ -64,8 +64,10 @@ Direzione.FightController = (function (Utils) {
         document.getElementById('scoreboardLayout').addEventListener('click', function (evt) {
           var half = evt.target.offsetHeight / 2
 
-          var white = this[' fight'].getWhiteOpponent()
-          var red   = this[' fight'].getRedOpponent()
+          var fight = this[' fightEmitter'].getFight()
+
+          var white = fight.getWhiteOpponent()
+          var red   = fight.getRedOpponent()
           switch (evt.target) {
             case document.querySelector('.shidoControlWrapper.white .up'):   return white.addShido()
             case document.querySelector('.shidoControlWrapper.white .down'): return white.removeShido()
@@ -87,22 +89,22 @@ Direzione.FightController = (function (Utils) {
               return _confirmFinish.call(this)
 
             case document.querySelector('img.toketa'):
-              return this[' fight'].toketa()
+              return fight.toketa()
 
             case document.querySelector('img.osaekomi-left'):
-              return this[' fight'].osaeKomi(Direzione.Fight.SIDE_WHITE)
+              return fight.osaeKomi(Direzione.Fight.SIDE_WHITE)
 
             case document.querySelector('img.osaekomi-right'):
-              return this[' fight'].osaeKomi(Direzione.Fight.SIDE_RED)
+              return fight.osaeKomi(Direzione.Fight.SIDE_RED)
 
             case document.querySelector('#countdown .start'):
-              if (this[' fight'].isStopped()) return
+              if (fight.isStopped()) return
 
-              return ! this[' fight'].isRunning() && this[' fight'].startPauseResume()
+              return ! fight.isRunning() && fight.startPauseResume()
             case document.querySelector('#countdown .stop'):
-              if (this[' fight'].isStopped()) return
+              if (fight.isStopped()) return
 
-              return this[' fight'].isRunning() && this[' fight'].startPauseResume()
+              return fight.isRunning() && fight.startPauseResume()
           }
         }.bind(this))
     }
@@ -117,8 +119,8 @@ Direzione.FightController = (function (Utils) {
          * @memberof   "Direzione.FightController"
          * @returns    {FightController}
          */
-        create: function (fight, translationConfig) {
-            return new FightController(fight, translationConfig)
+        create: function (fightEmitter, translationConfig) {
+            return new FightController(fightEmitter, translationConfig)
         }
     }
 })(Direzione.Utils)
@@ -226,9 +228,10 @@ Direzione.SettingsController = (function () {
 
 Direzione.ControlPanelController = (function () {
 
-    function ControlPanelController(fightEmitter) {
-        this[' emitter'] = fightEmitter
-        this[' listener'] = { fightChange: [], fightHistoryTrigger: [] }
+    function ControlPanelController(fightEmitter, translator) {
+        this[' emitter']    = fightEmitter
+        this[' translator'] = translator
+        this[' listener']   = { fightChange: [], fightHistoryTrigger: [] }
         _registerUIEvents.call(this)
     }
 
@@ -245,9 +248,18 @@ Direzione.ControlPanelController = (function () {
         return this
     }
 
+    function _avoidControl() {
+        var fightIsRunning = this[' emitter'].getFight().isRunning()
+        if (fightIsRunning) {
+            alert(this[' translator'].getTranslations().message['alert-no-control-during-fight'])
+        }
+        return fightIsRunning;
+    }
+
     function _registerUIEvents () {
         var remoteIndicator = document.getElementById('remoteIndicator')
         remoteIndicator.addEventListener('click', function (event) {
+            if (_avoidControl.call(this)) return
             if (this[' emitter'].isConnected()) {
                 this[' emitter'].disconnect()
                 return
@@ -262,6 +274,7 @@ Direzione.ControlPanelController = (function () {
         })
 
         document.getElementById('repertoire').addEventListener('click', function (evt) {
+            if (_avoidControl.call(this)) return
             if (typeof evt.target.parentNode.fight !== 'undefined') {
                 if (evt.target.matches('img.history')) {
                     _dispatch.call(this, 'fightHistoryTrigger', evt.target.parentNode.fight)
@@ -273,6 +286,7 @@ Direzione.ControlPanelController = (function () {
         }.bind(this))
 
         document.querySelector('#menue .settings').addEventListener('click', function (evt) {
+            if (_avoidControl.call(this)) return
             document.getElementById('settings').style.display = 'block'
             Direzione.State.keyControlScoreboard = false
             if (this[' emitter'].isConnected()) {
@@ -310,8 +324,8 @@ Direzione.ControlPanelController = (function () {
          * @memberof   "Direzione.ControlPanelController"
          * @returns    {ControlPanelController}
          */
-        create: function (fightEmitter) {
-            return new ControlPanelController(fightEmitter)
+        create: function (fightEmitter, translator) {
+            return new ControlPanelController(fightEmitter, translator)
         }
     }
 })()

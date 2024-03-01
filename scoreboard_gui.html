@@ -262,17 +262,16 @@
     var board             = Direzione.Scoreboard.create(fight, viewConfig)
     var fightEmitter      = Direzione.FightEmitter.create(appSettings.getCommunicationID(), fight)
     var translator        = Direzione.ViewTranslator.create(appSettings.getLanguage(), translationConfig)
-    var fightController   = Direzione.FightController.create(fight, translator)
+    var fightController   = Direzione.FightController.create(fightEmitter, translator)
     var historyController = Direzione.HistoryController.create(appSettings)
 
     Direzione.ThemeManager.changeThemeCSSForControlBoard(appSettings.getThemeID())
     Direzione.SettingsController.create(appSettings, fightSettings, viewConfig, translator)
-    Direzione.ControlPanelController.create(fightEmitter)
+    Direzione.ControlPanelController.create(fightEmitter, translator)
       .on('fightChange', function (cfight) {
         fight = cfight
         board.replaceFight(cfight)
         fightEmitter.replaceFight(cfight)
-        fightController.setFight(cfight)
       })
       .on('fightHistoryTrigger', function (fight) {
         historyController.setFight(fight).show()

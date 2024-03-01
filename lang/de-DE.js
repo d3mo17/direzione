@@ -1,7 +1,8 @@
 Direzione.translation = {
     "message": {
         "confirm-reset": "Sicher? Kampf zurücksetzen?",
-        "confirm-finish": "Sicher? Kampf abschließen?"
+        "confirm-finish": "Sicher? Kampf abschließen?",
+        "alert-no-control-during-fight": "Es ist nur die Kampfsteuerung möglich, solange ein Kampf läuft!"
     },
     "settings": {
         "headline": "Einstellungen",
