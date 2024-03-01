@@ -18,7 +18,7 @@
     width: 100vw;
     user-select: none;
   }
-  
+
   #countdown {
     grid-column: span 6;
     padding-top: 10px;
@@ -30,7 +30,7 @@
     border: 8px ridge darkgrey;
     border-bottom: none!important;
   }
-  
+
   #countUp {
     grid-column: span 6;
     font-size: 8vh;
@@ -49,19 +49,19 @@
     display: grid;
     grid-template-columns: 10fr 3fr 1fr 1fr 3fr 10fr !important;
   }
-  
+
   .center {
     text-align: center;
     color: orange;
   }
-  
+
   .rowWrapper {
     display: grid;
     grid-column: span 6;
     grid-template-columns: 1fr 1fr;
     background-color: yellowgreen;
   }
-  
+
   .club {
     display: table;
     color: black!important;
@@ -71,7 +71,7 @@
     padding: 0 5px 12px;
     text-align: center;
   }
-  
+
   .name {
     display: table;
     color: black!important;
@@ -80,7 +80,7 @@
     font-size: 5vh;
     padding: 12px 5px 0;
   }
-  
+
   .score {
     font-size: 34vh;
     line-height: 28vh;
@@ -90,7 +90,7 @@
     border-left: 8px ridge;
     border-right: 8px ridge;
   }
-  
+
   .shidoBox {
     /* visibility: hidden; */
     background-color: PapayaWhip;
@@ -102,20 +102,23 @@
     width: 18vh;
     height: 18vh;
   }
-  
+
   .shido {
-    line-height: 13vh
+    float: inline-start;
+    padding-left: 5.1vh;
+    line-height: 11.7vh;
   }
-  
+
   .shidoLabel {
+    float: inline-start;
+    padding: 0.5vh 0 0 4vh;
     font-size: 3.5vh;
-    line-height: 4vh;
   }
-  
+
   .white {
     color: white;
   }
-  
+
   .red {
     color: red;
   }

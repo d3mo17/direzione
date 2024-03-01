@@ -116,12 +116,15 @@ body {
 }
 
 .shido {
-  line-height: 13vh
+  float: inline-start;
+  padding-left: 5.1vh;
+  line-height: 11.7vh;
 }
 
 .shidoLabel {
+  float: inline-start;
+  padding: 0.5vh 0 0 4vh;
   font-size: 3.5vh;
-  line-height: 4vh;
 }
 
 .white {
