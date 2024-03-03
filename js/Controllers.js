@@ -24,6 +24,28 @@ Direzione.FightController = (function (Utils) {
         }
     }
 
+    function _triggerFight(action) {
+        var fight = this[' fightEmitter'].getFight()
+
+        function touchFight() {
+            if (typeof action === 'undefined') {
+                return fight.startPauseResume()
+            } else {
+                if (fight.isStopped()) return
+                switch (action) {
+                    case 'start': return ! fight.isRunning() && fight.startPauseResume()
+                    case 'stop': return fight.isRunning() && fight.startPauseResume()
+                }
+            }
+        }
+
+        if (this[' fightEmitter'].isConnected()) {
+            touchFight()
+        } else {
+            this[' fightEmitter'].connect().then(touchFight)
+        }
+    }
+
     _registerKeyBoardEvents = function () {
         document.addEventListener('keyup', function(event) {
         	this[' keylock'] = false
@@ -39,7 +61,7 @@ Direzione.FightController = (function (Utils) {
             switch (event.code) {
                 case 'Escape':      return _confirmReset.call(this)
                 case 'Enter':
-                case 'Space':       return fight.startPauseResume()
+                case 'Space':       return _triggerFight.call(this)
                 case 'ArrowLeft':   return fight.osaeKomi(Direzione.Fight.SIDE_WHITE)
                 case 'ArrowRight':  return fight.osaeKomi(Direzione.Fight.SIDE_RED)
                 // case 'ArrowDown':   return fight.osaeKomi(Direzione.Fight.SIDE_CENTER)
@@ -98,13 +120,10 @@ Direzione.FightController = (function (Utils) {
               return fight.osaeKomi(Direzione.Fight.SIDE_RED)
 
             case document.querySelector('#countdown .start'):
-              if (fight.isStopped()) return
+              return _triggerFight.call(this, 'start')
 
-              return ! fight.isRunning() && fight.startPauseResume()
             case document.querySelector('#countdown .stop'):
-              if (fight.isStopped()) return
-
-              return fight.isRunning() && fight.startPauseResume()
+              return _triggerFight.call(this, 'stop')
           }
         }.bind(this))
     }
@@ -258,20 +277,15 @@ Direzione.ControlPanelController = (function () {
 
     function _registerUIEvents () {
         var remoteIndicator = document.getElementById('remoteIndicator')
-        remoteIndicator.addEventListener('click', function (event) {
-            if (_avoidControl.call(this)) return
-            if (this[' emitter'].isConnected()) {
-                this[' emitter'].disconnect()
-                return
-            }
 
-            this[' emitter'].connect().then(function () {
-                remoteIndicator.className = 'on'
-            }.bind(this))
+        this[' emitter'].on('establish', function () { remoteIndicator.className = 'on' })
+        this[' emitter'].on('disconnect', function () { remoteIndicator.className = 'off' })
+
+        remoteIndicator.addEventListener('click', function (event) {
+            return _avoidControl.call(this) ||
+                    this[' emitter'].isConnected() && this[' emitter'].disconnect() ||
+                    this[' emitter'].connect()
         }.bind(this))
-        this[' emitter'].on('disconnect', function () {
-            remoteIndicator.className = 'off'
-        })
 
         document.getElementById('repertoire').addEventListener('click', function (evt) {
             if (_avoidControl.call(this)) return
