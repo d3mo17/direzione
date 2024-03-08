@@ -19,3 +19,7 @@
         top: 10px;
         height: 5vh;
     }
+
+    #settings div {
+        padding-top: 4px;
+    }

@@ -1,24 +1,48 @@
+Direzione.State = {
+    keyControlScoreboard: true
+}
+
 Direzione.FightController = (function (Utils) {
 
-    function FightController(fight, translator) {
-        this.setFight(fight)
-        this[' translator'] = translator
+    // todo: use fightemitter instead of fight ...
+    // check connection to remote scoreboard before starting fight
+    function FightController(fightEmitter, translator) {
+        this[' fightEmitter'] = fightEmitter
+        this[' translator']   = translator
         _registerKeyBoardEvents.call(this)
-    }
-
-    FightController.prototype.setFight = function (fight) {
-        this[' fight'] = fight
     }
 
     function _confirmReset() {
         if (confirm(this[' translator'].getTranslations().message['confirm-reset'])) {
-            this[' fight'].reset()
+            this[' fightEmitter'].getFight().reset()
         }
     }
 
     function _confirmFinish() {
         if (confirm(this[' translator'].getTranslations().message['confirm-finish'])) {
-            this[' fight'].stop()
+            this[' fightEmitter'].getFight().stop()
+        }
+    }
+
+    function _triggerFight(action) {
+        var fight = this[' fightEmitter'].getFight()
+
+        function touchFight() {
+            if (typeof action === 'undefined') {
+                return fight.startPauseResume()
+            } else {
+                if (fight.isStopped()) return
+                switch (action) {
+                    case 'start': return ! fight.isRunning() && fight.startPauseResume()
+                    case 'stop': return fight.isRunning() && fight.startPauseResume()
+                }
+            }
+        }
+
+        if (this[' fightEmitter'].isConnected()) {
+            touchFight()
+        } else {
+            this[' fightEmitter'].connect().then(touchFight)
         }
     }
 
@@ -27,19 +51,21 @@ Direzione.FightController = (function (Utils) {
         	this[' keylock'] = false
         }.bind(this))
       	document.addEventListener('keydown', function(event) {
-            if (this[' keylock']) return
+            if (this[' keylock'] || !Direzione.State.keyControlScoreboard) return
 
-            var white = this[' fight'].getWhiteOpponent()
-            var red   = this[' fight'].getRedOpponent()
+            var fight = this[' fightEmitter'].getFight()
+
+            var white = fight.getWhiteOpponent()
+            var red   = fight.getRedOpponent()
             this[' keylock'] = true
             switch (event.code) {
                 case 'Escape':      return _confirmReset.call(this)
                 case 'Enter':
-                case 'Space':       return this[' fight'].startPauseResume()
-                case 'ArrowLeft':   return this[' fight'].osaeKomi(Direzione.Fight.SIDE_WHITE)
-                case 'ArrowRight':  return this[' fight'].osaeKomi(Direzione.Fight.SIDE_RED)
-                // case 'ArrowDown':   return this[' fight'].osaeKomi(Direzione.Fight.SIDE_CENTER)
-                case 'ArrowUp':     return this[' fight'].toketa()
+                case 'Space':       return _triggerFight.call(this)
+                case 'ArrowLeft':   return fight.osaeKomi(Direzione.Fight.SIDE_WHITE)
+                case 'ArrowRight':  return fight.osaeKomi(Direzione.Fight.SIDE_RED)
+                // case 'ArrowDown':   return fight.osaeKomi(Direzione.Fight.SIDE_CENTER)
+                case 'ArrowUp':     return fight.toketa()
                 // left warrior
                 case 'KeyQ':        return white.addIppon()
                 case 'KeyW':        return white.addWazari()
@@ -60,8 +86,10 @@ Direzione.FightController = (function (Utils) {
         document.getElementById('scoreboardLayout').addEventListener('click', function (evt) {
           var half = evt.target.offsetHeight / 2
 
-          var white = this[' fight'].getWhiteOpponent()
-          var red   = this[' fight'].getRedOpponent()
+          var fight = this[' fightEmitter'].getFight()
+
+          var white = fight.getWhiteOpponent()
+          var red   = fight.getRedOpponent()
           switch (evt.target) {
             case document.querySelector('.shidoControlWrapper.white .up'):   return white.addShido()
             case document.querySelector('.shidoControlWrapper.white .down'): return white.removeShido()
@@ -83,22 +111,19 @@ Direzione.FightController = (function (Utils) {
               return _confirmFinish.call(this)
 
             case document.querySelector('img.toketa'):
-              return this[' fight'].toketa()
+              return fight.toketa()
 
             case document.querySelector('img.osaekomi-left'):
-              return this[' fight'].osaeKomi(Direzione.Fight.SIDE_WHITE)
+              return fight.osaeKomi(Direzione.Fight.SIDE_WHITE)
 
             case document.querySelector('img.osaekomi-right'):
-              return this[' fight'].osaeKomi(Direzione.Fight.SIDE_RED)
+              return fight.osaeKomi(Direzione.Fight.SIDE_RED)
 
             case document.querySelector('#countdown .start'):
-              if (this[' fight'].isStopped()) return
+              return _triggerFight.call(this, 'start')
 
-              return ! this[' fight'].isRunning() && this[' fight'].startPauseResume()
             case document.querySelector('#countdown .stop'):
-              if (this[' fight'].isStopped()) return
-
-              return this[' fight'].isRunning() && this[' fight'].startPauseResume()
+              return _triggerFight.call(this, 'stop')
           }
         }.bind(this))
     }
@@ -113,8 +138,8 @@ Direzione.FightController = (function (Utils) {
          * @memberof   "Direzione.FightController"
          * @returns    {FightController}
          */
-        create: function (fight, translationConfig) {
-            return new FightController(fight, translationConfig)
+        create: function (fightEmitter, translationConfig) {
+            return new FightController(fightEmitter, translationConfig)
         }
     }
 })(Direzione.Utils)
@@ -126,13 +151,27 @@ Direzione.SettingsController = (function () {
         this[' appSettings']   = appSettings
         this[' fightSettings'] = fightSettings
         this[' translator']    = translator
+        _initSoundSelect.call(this, viewConfig)
         _fillForm.call(this, viewConfig)
-        _registerUIEvents.call(this)
+        _registerUIEvents.call(this, viewConfig)
+    }
+
+    function _initSoundSelect(viewConfig) {
+        Direzione.sound_files.forEach(function (filename) {
+            var opt = document.createElement('option')
+            opt.value = 'sounds/' + filename
+            opt.innerText = filename
+            viewConfig.selectElemFightEndSound.appendChild(opt)
+        })
     }
 
     function _valueToElem(val, elem) {
         if (elem.tagName === 'INPUT') {
-            elem.value = val
+            if (elem.type === 'checkbox') {
+                elem.checked = val
+            } else {
+                elem.value = val
+            }
         } else if (elem.tagName === 'SELECT') {
             elem.childNodes.forEach(function (option) {
                 if (option.value === val) {
@@ -143,7 +182,7 @@ Direzione.SettingsController = (function () {
         }
     }
 
-    function _registerUIEvents () {
+    function _registerUIEvents (viewConfig) {
         var appSettings   = this[' appSettings']
         var fightSettings = this[' fightSettings']
         var translator    = this[' translator']
@@ -169,9 +208,32 @@ Direzione.SettingsController = (function () {
           fightSettings.setCountUpLimit(parseInt(this.value, 10))
           fightSettings.toStorage()
         })
+        viewConfig.inputElemCountUpLimitIppon.addEventListener('change', function (evt) {
+          fightSettings.setCountUpLimitIppon(parseInt(this.value, 10))
+          fightSettings.toStorage()
+        })
         viewConfig.inputElemLockOut.addEventListener('change', function (evt) {
           fightSettings.setLockOutTime(parseInt(this.value, 10))
           fightSettings.toStorage()
+        })
+        viewConfig.inputElemInvertGripSide.addEventListener('change', function (evt) {
+          fightSettings.setGripSideInverted(this.checked)
+          fightSettings.toStorage()
+        })
+        viewConfig.inputElemInvertGripDisplay.addEventListener('change', function (evt) {
+          fightSettings.setGripDisplayInverted(this.checked)
+          fightSettings.toStorage()
+        })
+        viewConfig.selectElemFightEndSound.addEventListener('change', function (evt) {
+          fightSettings.setTimeUpSoundFile(this.value)
+          fightSettings.toStorage()
+        })
+        viewConfig.buttonElemFightEndSoundTest.addEventListener('click', function (evt) {
+            var audio = new Audio(viewConfig.selectElemFightEndSound.value)
+            audio.currentTime = 0
+            audio.oncanplay = function () { audio.play() }
+            evt.preventDefault()
+            evt.stopPropagation()
         })
     }
 
@@ -181,7 +243,11 @@ Direzione.SettingsController = (function () {
         _valueToElem(this[' appSettings'].getLanguage(), viewConfig.inputElemLanguage)
         _valueToElem(this[' fightSettings'].getDuration(), viewConfig.inputElemDuration)
         _valueToElem(this[' fightSettings'].getCountUpLimit(), viewConfig.inputElemCountUpLimit)
+        _valueToElem(this[' fightSettings'].getCountUpLimitIppon(), viewConfig.inputElemCountUpLimitIppon)
         _valueToElem(this[' fightSettings'].getLockOutTime(), viewConfig.inputElemLockOut)
+        _valueToElem(this[' fightSettings'].isGripSideInverted(), viewConfig.inputElemInvertGripSide)
+        _valueToElem(this[' fightSettings'].isGripDisplayInverted(), viewConfig.inputElemInvertGripDisplay)
+        _valueToElem(this[' fightSettings'].getTimeUpSoundFile(), viewConfig.selectElemFightEndSound)
     }
 
     // Module-API
@@ -203,9 +269,10 @@ Direzione.SettingsController = (function () {
 
 Direzione.ControlPanelController = (function () {
 
-    function ControlPanelController(fightEmitter) {
-        this[' emitter'] = fightEmitter
-        this[' listener'] = { fightChange: [], fightHistoryTrigger: [] }
+    function ControlPanelController(fightEmitter, translator) {
+        this[' emitter']    = fightEmitter
+        this[' translator'] = translator
+        this[' listener']   = { fightChange: [], fightHistoryTrigger: [] }
         _registerUIEvents.call(this)
     }
 
@@ -222,23 +289,28 @@ Direzione.ControlPanelController = (function () {
         return this
     }
 
+    function _avoidControl() {
+        var fightIsRunning = this[' emitter'].getFight().isRunning()
+        if (fightIsRunning) {
+            alert(this[' translator'].getTranslations().message['alert-no-control-during-fight'])
+        }
+        return fightIsRunning;
+    }
+
     function _registerUIEvents () {
         var remoteIndicator = document.getElementById('remoteIndicator')
-        remoteIndicator.addEventListener('click', function (event) {
-            if (this[' emitter'].isConnected()) {
-                this[' emitter'].disconnect()
-                return
-            }
 
-            this[' emitter'].connect().then(function () {
-                remoteIndicator.className = 'on'
-            }.bind(this))
+        this[' emitter'].on('establish', function () { remoteIndicator.className = 'on' })
+        this[' emitter'].on('disconnect', function () { remoteIndicator.className = 'off' })
+
+        remoteIndicator.addEventListener('click', function (event) {
+            return _avoidControl.call(this) ||
+                    this[' emitter'].isConnected() && this[' emitter'].disconnect() ||
+                    this[' emitter'].connect()
         }.bind(this))
-        this[' emitter'].on('disconnect', function () {
-            remoteIndicator.className = 'off'
-        })
 
         document.getElementById('repertoire').addEventListener('click', function (evt) {
+            if (_avoidControl.call(this)) return
             if (typeof evt.target.parentNode.fight !== 'undefined') {
                 if (evt.target.matches('img.history')) {
                     _dispatch.call(this, 'fightHistoryTrigger', evt.target.parentNode.fight)
@@ -250,11 +322,18 @@ Direzione.ControlPanelController = (function () {
         }.bind(this))
 
         document.querySelector('#menue .settings').addEventListener('click', function (evt) {
-          document.getElementById('settings').style.display = 'block'
+            if (_avoidControl.call(this)) return
+            document.getElementById('settings').style.display = 'block'
+            Direzione.State.keyControlScoreboard = false
+            if (this[' emitter'].isConnected()) {
+                this[' emitter'].disconnect()
+                return
+            }
         }.bind(this))
 
         document.querySelector('#settings .close').addEventListener('click', function (evt) {
           document.getElementById('settings').style.display = 'none'
+          Direzione.State.keyControlScoreboard = true
         }.bind(this))
     }
 
@@ -281,8 +360,8 @@ Direzione.ControlPanelController = (function () {
          * @memberof   "Direzione.ControlPanelController"
          * @returns    {ControlPanelController}
          */
-        create: function (fightEmitter) {
-            return new ControlPanelController(fightEmitter)
+        create: function (fightEmitter, translator) {
+            return new ControlPanelController(fightEmitter, translator)
         }
     }
 })()

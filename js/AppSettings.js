@@ -1,6 +1,7 @@
 Direzione.AppSettings = (function () {
 
     var LANGUAGES = ['de-DE', 'en-GB']
+    var SETTINGS  = ['language', 'communicationID', 'theme']
 
     /**
      * @class
@@ -16,11 +17,13 @@ Direzione.AppSettings = (function () {
         this.setLanguage('de-DE')
         this.setThemeID('blue')
         this.fromStorage()
+        this.fromURLParameters()
     }
 
     AppSettings.prototype = {
         toStorage:   _toStorage,
         fromStorage: _fromStorage,
+        fromURLParameters: _fromURLParameters,
         getLanguage: function () { return this.language },
         getCommunicationID: function () { return this.communicationID },
         getThemeID: function () { return this.theme },
@@ -62,9 +65,22 @@ Direzione.AppSettings = (function () {
         if (settings) {
             obj = JSON.parse(settings)
             Object.keys(obj).forEach(function (key) {
-                this[key] = obj[key]
+                SETTINGS.includes(key) && (this[key] = obj[key])
             }, this)
         }
+    }
+
+    /**
+     * Fetches the settings from url parameters given in query and applies them to this object
+     *
+     * @method  AppSettings#fromURLParameters
+     * @public
+     */
+    function _fromURLParameters() {
+        var urlParams = new URLSearchParams(window.location.search)
+        Array.from(urlParams.entries()).forEach(function (entry) {
+            SETTINGS.includes(entry[0]) && (this[entry[0]] = entry[1])
+        }, this)
     }
 
     // Module-API

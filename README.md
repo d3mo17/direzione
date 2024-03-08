@@ -15,14 +15,6 @@ In its early state, it can handle a playlist of opponents and displays the scori
     $ npx direzione-fit
 ```
 
-### API documentation
-[API of Direzione](api.md)
-
-
-## Scoreboard Example
-
-This example shows how a scoreboard can be controlled by persons sitting at the referee table.
-
 ## How to use
 
 It is important to execute all installation steps mentioned above, before direzione is ready to use.
@@ -48,6 +40,10 @@ You can also open `all_in_one_demo.html` instead. This file uses frames to load 
 | ";" or "Ö" | Subtract a penalty point to red opponent (Remove Shido from red side) |
 | Arrow keys (left/right) | During countdown runs, starts counting up to measure the time how long one opponent holds the other in a grip |
 | Arrow up | Stops counting up for time measure fin a grip |
+
+## Customize audio that signals time up
+
+Add new sound file to the directory `sounds` and add a new entry in file `file_list.js` (also located in directory `sounds`)
 
 ## Connection Technique
 
