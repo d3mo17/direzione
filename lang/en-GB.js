@@ -2,6 +2,7 @@ Direzione.translation = {
     "message": {
         "confirm-reset": "Sure? Reset fight?",
         "confirm-finish": "Sure? Finish fight?",
+        "alert-group-exists": "A group with this name already exists!",
         "alert-no-control-during-fight": "Only control of running fight is possible!"
     },
     "settings": {

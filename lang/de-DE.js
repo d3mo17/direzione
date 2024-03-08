@@ -2,6 +2,7 @@ Direzione.translation = {
     "message": {
         "confirm-reset": "Sicher? Kampf zurücksetzen?",
         "confirm-finish": "Sicher? Kampf abschließen?",
+        "alert-group-exists": "Eine Gruppe mit diesem Namen existiert bereits!",
         "alert-no-control-during-fight": "Es ist nur die Kampfsteuerung möglich, solange ein Kampf läuft!"
     },
     "settings": {

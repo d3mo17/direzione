@@ -448,29 +448,58 @@ Direzione.OpponentsController = (function (OpponentGroup) {
     /**
      * @param {Object} viewConfig
      */
-    function OpponentsController(viewConfig) {
-        this[' entryJig'] = viewConfig.entryJigElem.cloneNode(true)
+    function OpponentsController(viewConfig, translator) {
+        this[' groups']     = []
+        this[' translator'] = translator
+        this[' groupPanel'] = viewConfig.entryJigElem.parentNode
+        this[' entryJig']   = viewConfig.entryJigElem.cloneNode(true)
+        this[' entryJig'].style = ''
+        this[' entryJig'].removeAttribute('id')
         viewConfig.entryJigElem.remove();
 
-        _registerUIEvents.call(this)
+        _registerUIEvents.call(this, viewConfig)
+    }
+
+    function _groupExists(name) {
+        return this[' groups'].some(function (group) {
+            return group.getName() === name
+        })
     }
 
     function _createGroup(name) {
-        OpponentGroup.create(name)
+        if (_groupExists.call(this, name)) {
+            alert(this[' translator'].getTranslations().message['alert-group-exists']);
+            return
+        }
+
+        var groupElem = this[' entryJig'].cloneNode(true)
+        var group     = OpponentGroup.create(name)
+
+        groupElem.getElementsByTagName('caption')[0].innerText = name
+
+        group.on('add', function (person) {
+            var tr = document.createElement('tr')
+            groupElem.appendChild(tr)
+        }.bind(group))
+
+        this[' groupPanel'].appendChild(groupElem)
+        this[' groups'].push(group)
     }
 
-    function _registerUIEvents () {
-        document.getElementById('addGroup').addEventListener('click', function (evt) {
-            _createGroup.call(this, document.getElementById('groupName'))
+    function _registerUIEvents (viewConfig) {
+        viewConfig.buttonElemAddGroupName.addEventListener('click', function (evt) {
+            evt.preventDefault()
+            evt.stopPropagation()
+            _createGroup.call(this, viewConfig.inputElemGroupName.value)
         }.bind(this))
 
         document.querySelector('#menue .opponents').addEventListener('click', function (evt) {
           document.getElementById('groups').style.display = 'block'
-        }.bind(this))
+        })
 
         document.querySelector('#groups .close').addEventListener('click', function (evt) {
           document.getElementById('groups').style.display = 'none'
-        }.bind(this))
+        })
     }
 
     /**
@@ -499,8 +528,8 @@ Direzione.OpponentsController = (function (OpponentGroup) {
          * @memberof   "Direzione.OpponentsController"
          * @returns    {OpponentsController}
          */
-        create: function (viewConfig) {
-            return new OpponentsController(viewConfig)
+        create: function (viewConfig, translator) {
+            return new OpponentsController(viewConfig, translator)
         }
     }
 })(Direzione.OpponentGroup)

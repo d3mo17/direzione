@@ -335,10 +335,12 @@
     fightFactory(persons[1], persons[3])
     fightFactory(persons[0], persons[2])
 
-    var viewConfig = {
-        entryJigElem: document.getElementById('groupJig')
+    viewConfig = {
+        entryJigElem:           document.getElementById('groupJig'),
+        inputElemGroupName:     document.getElementById('groupName'),
+        buttonElemAddGroupName: document.getElementById('addGroup')
     }
-    Direzione.OpponentsController.create(viewConfig);
+    Direzione.OpponentsController.create(viewConfig, translator);
 
 
     viewConfig = {
