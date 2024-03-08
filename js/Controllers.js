@@ -443,7 +443,7 @@ Direzione.HistoryController = (function (Utils) {
 })(Direzione.Utils)
 
 
-Direzione.OpponentsController = (function (OpponentGroup) {
+Direzione.OpponentsController = (function (OpponentGroup, Person) {
 
     /**
      * @param {Object} viewConfig
@@ -451,41 +451,68 @@ Direzione.OpponentsController = (function (OpponentGroup) {
     function OpponentsController(viewConfig, translator) {
         this[' groups']     = []
         this[' translator'] = translator
-        this[' groupPanel'] = viewConfig.entryJigElem.parentNode
-        this[' entryJig']   = viewConfig.entryJigElem.cloneNode(true)
-        this[' entryJig'].style = ''
-        this[' entryJig'].removeAttribute('id')
-        viewConfig.entryJigElem.remove();
+        this[' groupPanel'] = viewConfig.groupJigElem.parentNode
+        this[' personJig']  = viewConfig.personJigElem.cloneNode(true)
+        this[' personJig'].removeAttribute('id')
+        viewConfig.personJigElem.remove();
+        this[' groupJig']   = viewConfig.groupJigElem.cloneNode(true)
+        this[' groupJig'].removeAttribute('id')
+        viewConfig.groupJigElem.remove();
 
         _registerUIEvents.call(this, viewConfig)
     }
 
+    /**
+     * @param {String} name
+     */
     function _groupExists(name) {
         return this[' groups'].some(function (group) {
             return group.getName() === name
         })
     }
 
+    /**
+     * @param {String} name
+     */
     function _createGroup(name) {
         if (_groupExists.call(this, name)) {
             alert(this[' translator'].getTranslations().message['alert-group-exists']);
             return
         }
 
-        var groupElem = this[' entryJig'].cloneNode(true)
+        var groupElem = this[' groupJig'].cloneNode(true)
         var group     = OpponentGroup.create(name)
 
         groupElem.getElementsByTagName('caption')[0].innerText = name
 
         group.on('add', function (person) {
-            var tr = document.createElement('tr')
+            var tr = this[' personJig'].cloneNode(true)
+            tr.person = person
+            tr.querySelector('.fname').innerText = person.getFirstName()
+            tr.querySelector('.lname').innerText = person.getLastName()
+            tr.querySelector('.clubname').innerText = person.getClubName()
             groupElem.appendChild(tr)
-        }.bind(group))
+        }.bind(this))
+
+        groupElem.querySelector('.add').addEventListener('click', function (evt) {
+            var persDialogElem = document.getElementById('persons')
+            persDialogElem.group = group
+            persDialogElem.style.display = 'block'
+        })
 
         this[' groupPanel'].appendChild(groupElem)
         this[' groups'].push(group)
     }
 
+    function _createAndAddPersonToGroup(group, fname, lname, cname) {
+        var pers = Person.create(fname, lname, cname)
+        group.addPerson(pers)
+    }
+
+    /**
+     * @private
+     * @param {Object} viewConfig
+     */
     function _registerUIEvents (viewConfig) {
         viewConfig.buttonElemAddGroupName.addEventListener('click', function (evt) {
             evt.preventDefault()
@@ -493,12 +520,28 @@ Direzione.OpponentsController = (function (OpponentGroup) {
             _createGroup.call(this, viewConfig.inputElemGroupName.value)
         }.bind(this))
 
+        viewConfig.buttonElemAddPerson.addEventListener('click', function (evt) {
+            evt.preventDefault()
+            evt.stopPropagation()
+            _createAndAddPersonToGroup.call(
+                this,
+                document.getElementById('persons').group,
+                viewConfig.inputElemPersonFirstName.value,
+                viewConfig.inputElemPersonLastName.value,
+                viewConfig.inputElemPersonClubName.value
+            )
+        }.bind(this))
+
         document.querySelector('#menue .opponents').addEventListener('click', function (evt) {
           document.getElementById('groups').style.display = 'block'
         })
 
         document.querySelector('#groups .close').addEventListener('click', function (evt) {
-          document.getElementById('groups').style.display = 'none'
+            document.getElementById('groups').style.display = 'none'
+        })
+
+        document.querySelector('#persons .close').addEventListener('click', function (evt) {
+            document.getElementById('persons').style.display = 'none'
         })
     }
 
@@ -532,4 +575,4 @@ Direzione.OpponentsController = (function (OpponentGroup) {
             return new OpponentsController(viewConfig, translator)
         }
     }
-})(Direzione.OpponentGroup)
+})(Direzione.OpponentGroup, Direzione.Person)

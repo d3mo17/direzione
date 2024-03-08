@@ -15,6 +15,7 @@ Direzione.ThemeManager = (function () {
         _addStyleTag(BASE_PATH + themeID + '/settings.css')
         _addStyleTag(BASE_PATH + themeID + '/history.css')
         _addStyleTag(BASE_PATH + themeID + '/groups.css')
+        _addStyleTag(BASE_PATH + themeID + '/persons.css')
     }
 
     function _removeIncludedCSS() {

@@ -1,0 +1,21 @@
+#persons {
+    position: absolute;
+    top: calc(50% - 160px);
+    left: calc(50% - 200px);
+    width: 400px;
+    height: 300px;
+    z-index: 120;
+    background-color: #DAF7A6;
+    padding: 0 20px;
+}
+
+    #persons input {
+        caret-color: black !important;
+    }
+
+    #persons .close {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        height: 5vh;
+    }

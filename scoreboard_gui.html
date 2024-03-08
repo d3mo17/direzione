@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="themes/blue/settings.css">
     <link rel="stylesheet" href="themes/blue/history.css">
     <link rel="stylesheet" href="themes/blue/groups.css">
+    <link rel="stylesheet" href="themes/blue/persons.css">
     <script src="node_modules/durata/dist/durata.min.js"></script>
     <script src="node_modules/peerjs/dist/peerjs.min.js"></script>
     <script src="node_modules/direzione-lib/dist/direzione-lib.min.js"></script>
@@ -209,9 +210,57 @@
               <button id="addGroup">add</button>
             </form>
 
-            <table id="groupJig" style="display: none">
+            <table id="groupJig">
               <caption>Group name</caption>
+              <thead>
+                <tr>
+                  <th>Firstname</th>
+                  <th>Lastname</th>
+                  <th>Club</th>
+                  <th>&nbsp;</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr id="personJig">
+                  <td class="fname"></td>
+                  <td class="lname"></td>
+                  <td class="clubname"></td>
+                  <td class="ctrls">
+                    <img class="opponents remove" src="node_modules/lucide-static/icons/user-minus.svg" alt="remove user" />
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr><td colspan="4">
+                  <img class="opponents add" src="node_modules/lucide-static/icons/user-plus.svg" alt="add user" />
+                </td></tr>
+              </tfoot>
             </table>
+          </div>
+
+          <div id="persons" style="display:none">
+
+            <img class="close" src="node_modules/lucide-static/icons/x.svg" alt="close" />
+            <h1>Person</h1>
+
+            <form>
+              <div>
+                <label for="firstName">First name: </label>
+                <input id="firstName" type="text" />
+              </div>
+
+              <div>
+                <label for="lastName">Last name: </label>
+                <input id="lastName" type="text" />
+              </div>
+
+              <div>
+                <label for="clubName">Club: </label>
+                <input id="clubName" type="text" />
+              </div>
+
+              <button id="addPerson">add</button>
+            </form>
           </div>
   </body>
 
@@ -336,9 +385,14 @@
     fightFactory(persons[0], persons[2])
 
     viewConfig = {
-        entryJigElem:           document.getElementById('groupJig'),
-        inputElemGroupName:     document.getElementById('groupName'),
-        buttonElemAddGroupName: document.getElementById('addGroup')
+        groupJigElem:             document.getElementById('groupJig'),
+        personJigElem:            document.getElementById('personJig'),
+        inputElemGroupName:       document.getElementById('groupName'),
+        buttonElemAddGroupName:   document.getElementById('addGroup'),
+        inputElemPersonFirstName: document.getElementById('firstName'),
+        inputElemPersonLastName:  document.getElementById('lastName'),
+        inputElemPersonClubName:  document.getElementById('clubName'),
+        buttonElemAddPerson:      document.getElementById('addPerson')
     }
     Direzione.OpponentsController.create(viewConfig, translator);
 
