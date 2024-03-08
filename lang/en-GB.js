@@ -17,7 +17,8 @@ Direzione.translation = {
         "language": {
           "label": "Language: "
         },
-        "lock-out": "Lock-out for opponents (ms): "
+        "lock-out": "Lock-out for opponents (ms): ",
+        "time-up-sound": "Audio signal to play when fight time is up: "
     },
     "scoreboard": {
         "disconnected":        "remote board disconnected",

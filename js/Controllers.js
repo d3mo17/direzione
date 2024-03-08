@@ -151,8 +151,18 @@ Direzione.SettingsController = (function () {
         this[' appSettings']   = appSettings
         this[' fightSettings'] = fightSettings
         this[' translator']    = translator
+        _initSoundSelect.call(this, viewConfig)
         _fillForm.call(this, viewConfig)
-        _registerUIEvents.call(this)
+        _registerUIEvents.call(this, viewConfig)
+    }
+
+    function _initSoundSelect(viewConfig) {
+        Direzione.sound_files.forEach(function (filename) {
+            var opt = document.createElement('option')
+            opt.value = 'sounds/' + filename
+            opt.innerText = filename
+            viewConfig.selectElemFightEndSound.appendChild(opt)
+        })
     }
 
     function _valueToElem(val, elem) {
@@ -172,7 +182,7 @@ Direzione.SettingsController = (function () {
         }
     }
 
-    function _registerUIEvents () {
+    function _registerUIEvents (viewConfig) {
         var appSettings   = this[' appSettings']
         var fightSettings = this[' fightSettings']
         var translator    = this[' translator']
@@ -214,6 +224,17 @@ Direzione.SettingsController = (function () {
           fightSettings.setGripDisplayInverted(this.checked)
           fightSettings.toStorage()
         })
+        viewConfig.selectElemFightEndSound.addEventListener('change', function (evt) {
+          fightSettings.setTimeUpSoundFile(this.value)
+          fightSettings.toStorage()
+        })
+        viewConfig.buttonElemFightEndSoundTest.addEventListener('click', function (evt) {
+            var audio = new Audio(viewConfig.selectElemFightEndSound.value)
+            audio.currentTime = 0
+            audio.oncanplay = function () { audio.play() }
+            evt.preventDefault()
+            evt.stopPropagation()
+        })
     }
 
     function _fillForm(viewConfig) {
@@ -226,6 +247,7 @@ Direzione.SettingsController = (function () {
         _valueToElem(this[' fightSettings'].getLockOutTime(), viewConfig.inputElemLockOut)
         _valueToElem(this[' fightSettings'].isGripSideInverted(), viewConfig.inputElemInvertGripSide)
         _valueToElem(this[' fightSettings'].isGripDisplayInverted(), viewConfig.inputElemInvertGripDisplay)
+        _valueToElem(this[' fightSettings'].getTimeUpSoundFile(), viewConfig.selectElemFightEndSound)
     }
 
     // Module-API

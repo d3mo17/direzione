@@ -17,7 +17,8 @@ Direzione.translation = {
         "language": {
           "label": "Sprache: "
         },
-        "lock-out": "Pause für Kämpfer vor dem nächsten Kampf (ms): "
+        "lock-out": "Pause für Kämpfer vor dem nächsten Kampf (ms): ",
+        "time-up-sound": "Audiosignal, wenn die Kampfzeit abgelaufen ist: "
     },
     "scoreboard": {
         "disconnected":        "Fernanzeige entkoppelt",
