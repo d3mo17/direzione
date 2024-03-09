@@ -472,6 +472,17 @@ Direzione.OpponentsController = (function (OpponentGroup, Person) {
     }
 
     /**
+     *
+     * @param {Element} groupElem
+     */
+    function _removeGroup(groupElem) {
+        this[' groups'] = this[' groups'].filter(function(obj) {
+            return obj !== this;
+        }.bind(groupElem.group))
+        groupElem.remove()
+    }
+
+    /**
      * @param {String} name
      */
     function _createGroup(name) {
@@ -483,7 +494,18 @@ Direzione.OpponentsController = (function (OpponentGroup, Person) {
         var groupElem = this[' groupJig'].cloneNode(true)
         var group     = OpponentGroup.create(name)
 
+        groupElem.group = group
         groupElem.getElementsByTagName('caption')[0].innerText = name
+        groupElem.querySelector('thead .group.remove').addEventListener(
+            'click', function (groupElem, evt) {
+                if (confirm(
+                        this[' translator'].getTranslations().message['confirm-remove']
+                            .replace('%s', groupElem.group.getName())
+                )) {
+                    _removeGroup.call(this, groupElem)
+                }
+            }.bind(this, groupElem)
+        )
         groupElem.querySelector('th.hfn').innerText
             = this[' translator'].getTranslations().groups.firstName
         groupElem.querySelector('th.hln').innerText
