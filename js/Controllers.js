@@ -485,14 +485,25 @@ Direzione.OpponentsController = (function (OpponentGroup, Person) {
 
         groupElem.getElementsByTagName('caption')[0].innerText = name
 
-        group.on('add', function (person) {
+        group.on('add', function (group, person) {
             var tr = this[' personJig'].cloneNode(true)
             tr.person = person
             tr.querySelector('.fname').innerText = person.getFirstName()
             tr.querySelector('.lname').innerText = person.getLastName()
             tr.querySelector('.clubname').innerText = person.getClubName()
-            groupElem.appendChild(tr)
-        }.bind(this))
+            tr.querySelector('.ctrls .remove').addEventListener('click', function (group, person) {
+                if (confirm('Sure?')) {
+                    group.removePerson(person)
+                }
+            }.bind(this, group, person))
+            groupElem.querySelector('tbody').appendChild(tr)
+        }.bind(this, group))
+
+        group.on('remove', function (groupElem, person) {
+            groupElem.querySelectorAll('tbody tr').forEach(function (tr) {
+                tr.person === person && tr.remove()
+            })
+        }.bind(this, groupElem))
 
         groupElem.querySelector('.add').addEventListener('click', function (evt) {
             var persDialogElem = document.getElementById('persons')
