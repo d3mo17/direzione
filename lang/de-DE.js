@@ -2,6 +2,7 @@ Direzione.translation = {
     "message": {
         "confirm-reset": "Sicher? Kampf zurücksetzen?",
         "confirm-finish": "Sicher? Kampf abschließen?",
+        "confirm-remove": "Sicher '%s' entfernen?",
         "alert-group-exists": "Eine Gruppe mit diesem Namen existiert bereits!",
         "alert-no-control-during-fight": "Es ist nur die Kampfsteuerung möglich, solange ein Kampf läuft!"
     },
@@ -31,14 +32,24 @@ Direzione.translation = {
         "invert-grip-display": "Entgegengesetzte Anzeige für den Haltegriff"
     },
     "history": {
-      "headline": "Protokoll",
-      "entryTime": "Zeit d. Eintrags",
-      "entryType": "Typ",
-      "entryInfo": "Info"
+        "headline": "Protokoll",
+        "entryTime": "Zeit d. Eintrags",
+        "entryType": "Typ",
+        "entryInfo": "Info"
+    },
+    "person": {
+        "headline": "Person",
+        "firstName": "Vorname: ",
+        "lastName": "Nachname: ",
+        "club": "Verein: ",
+        "addButton": "hinzufügen"
     },
     "groups": {
-      "headline": "Gruppen",
-      "groupName": "Gruppename: ",
-      "addButton": "hinzufügen"
+        "headline": "Gruppen",
+        "groupName": "Gruppename: ",
+        "firstName": "Vorname",
+        "lastName": "Nachname",
+        "club": "Verein",
+        "addButton": "hinzufügen"
     }
 }

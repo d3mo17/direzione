@@ -2,6 +2,7 @@ Direzione.translation = {
     "message": {
         "confirm-reset": "Sure? Reset fight?",
         "confirm-finish": "Sure? Finish fight?",
+        "confirm-remove": "Sure, remove '%s'?",
         "alert-group-exists": "A group with this name already exists!",
         "alert-no-control-during-fight": "Only control of running fight is possible!"
     },
@@ -31,14 +32,24 @@ Direzione.translation = {
         "invert-grip-display": "Invert side display for count up"
     },
     "history": {
-      "headline": "Protocol",
-      "entryTime": "Time of entry",
-      "entryType": "Type",
-      "entryInfo": "Info"
+        "headline": "Protocol",
+        "entryTime": "Time of entry",
+        "entryType": "Type",
+        "entryInfo": "Info"
+    },
+    "person": {
+        "headline": "Person",
+        "firstName": "First name: ",
+        "lastName": "Last name: ",
+        "club": "Club name: ",
+        "addButton": "add"
     },
     "groups": {
-      "headline": "Groups",
-      "groupName": "Group name: ",
-      "addButton": "add"
+        "headline": "Groups",
+        "groupName": "Group name: ",
+        "firstName": "First name",
+        "lastName": "Last name",
+        "club": "Club name",
+        "addButton": "add"
     }
 }

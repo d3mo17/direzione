@@ -214,10 +214,10 @@
               <caption>Group name</caption>
               <thead>
                 <tr>
-                  <th>Firstname</th>
-                  <th>Lastname</th>
-                  <th>Club</th>
                   <th>&nbsp;</th>
+                  <th class="hfn">First name</th>
+                  <th class="hln">Last name</th>
+                  <th class="hcn">Club</th>
                 </tr>
               </thead>
               <tbody>
@@ -323,9 +323,19 @@
           "entryType": "#history #log .second",
           "entryInfo": "#history #log .third"
         },
+        "person": {
+          "headline": "#persons h1",
+          "firstName": "#persons label[for=firstName]",
+          "lastName": "#persons label[for=lastName]",
+          "club": "#persons label[for=clubName]",
+          "addButton": "#persons #addPerson"
+        },
         "groups": {
           "headline": "#groups h1",
           "groupName": "#groups label[for=groupName]",
+          "firstName": "#groups th.hfn",
+          "lastName": "#groups th.hln",
+          "club": "#groups th.hcn",
           "addButton": "#groups #addGroup"
         }
     }

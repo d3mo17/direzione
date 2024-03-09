@@ -484,6 +484,12 @@ Direzione.OpponentsController = (function (OpponentGroup, Person) {
         var group     = OpponentGroup.create(name)
 
         groupElem.getElementsByTagName('caption')[0].innerText = name
+        groupElem.querySelector('th.hfn').innerText
+            = this[' translator'].getTranslations().groups.firstName
+        groupElem.querySelector('th.hln').innerText
+            = this[' translator'].getTranslations().groups.lastName
+        groupElem.querySelector('th.hcn').innerText
+            = this[' translator'].getTranslations().groups.club
 
         group.on('add', function (group, person) {
             var tr = this[' personJig'].cloneNode(true)
@@ -492,7 +498,10 @@ Direzione.OpponentsController = (function (OpponentGroup, Person) {
             tr.querySelector('.lname').innerText = person.getLastName()
             tr.querySelector('.clubname').innerText = person.getClubName()
             tr.querySelector('.ctrls .remove').addEventListener('click', function (group, person) {
-                if (confirm('Sure?')) {
+                if (confirm(
+                    this[' translator'].getTranslations().message['confirm-remove']
+                        .replace('%s', person.getFirstName() + ' ' + person.getLastName())
+                )) {
                     group.removePerson(person)
                 }
             }.bind(this, group, person))
@@ -544,8 +553,18 @@ Direzione.OpponentsController = (function (OpponentGroup, Person) {
         }.bind(this))
 
         document.querySelector('#menue .opponents').addEventListener('click', function (evt) {
-          document.getElementById('groups').style.display = 'block'
-        })
+            document.getElementById('groups').style.display = 'block'
+
+            document.querySelectorAll('#groups th.hfn').forEach(function (elem) {
+                elem.innerText = this[' translator'].getTranslations().groups.firstName
+            }, this)
+            document.querySelectorAll('#groups th.hln').forEach(function (elem) {
+                elem.innerText = this[' translator'].getTranslations().groups.lastName
+            }, this)
+            document.querySelectorAll('#groups th.hcn').forEach(function (elem) {
+                elem.innerText = this[' translator'].getTranslations().groups.club
+            }, this)
+        }.bind(this))
 
         document.querySelector('#groups .close').addEventListener('click', function (evt) {
             document.getElementById('groups').style.display = 'none'
