@@ -546,6 +546,13 @@ Direzione.OpponentsController = (function (OpponentGroup, Person) {
         this[' groups'].push(group)
     }
 
+    /**
+     *
+     * @param {OpponentGroup} group
+     * @param {String} fname
+     * @param {String} lname
+     * @param {String} cname
+     */
     function _createAndAddPersonToGroup(group, fname, lname, cname) {
         var pers = Person.create(fname, lname, cname)
         group.addPerson(pers)
@@ -575,6 +582,7 @@ Direzione.OpponentsController = (function (OpponentGroup, Person) {
         }.bind(this))
 
         document.querySelector('#menue .opponents').addEventListener('click', function (evt) {
+            Direzione.State.keyControlScoreboard = false
             document.getElementById('groups').style.display = 'block'
 
             document.querySelectorAll('#groups th.hfn').forEach(function (elem) {
@@ -589,7 +597,9 @@ Direzione.OpponentsController = (function (OpponentGroup, Person) {
         }.bind(this))
 
         document.querySelector('#groups .close').addEventListener('click', function (evt) {
+            Direzione.State.keyControlScoreboard = true
             document.getElementById('groups').style.display = 'none'
+            document.getElementById('persons').style.display = 'none'
         })
 
         document.querySelector('#persons .close').addEventListener('click', function (evt) {
