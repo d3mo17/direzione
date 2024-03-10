@@ -65,6 +65,16 @@
   </body>
 
   <script>
+
+    // Turn off screensavers
+    if ('wakeLock' in navigator) {
+        (function enableWakeLock() {
+            navigator.wakeLock.request('screen').then(function (wakeLock) {
+                wakeLock.addEventListener('release', enableWakeLock)
+            })
+        })()
+    }
+
     var viewConfig = {
         outputElemCountdown:             document.getElementById('countdown'),
         outputElemStopwatchSeconds:      document.getElementById('countUpSec'),
