@@ -268,31 +268,7 @@
 
   <script>
 
-    var viewConfig = {
-        outputElemCountdown:             document.querySelector('#countdown span.display'),
-        outputElemStopwatchSeconds:      document.getElementById('countUpSec'),
-        outputElemStopwatchMilliseconds: document.getElementById('countUpMSec'),
-        outputElemRedScore:              document.getElementById('redScore'),
-        outputElemWhiteScore:            document.getElementById('whiteScore'),
-        outputElemRedShido:              document.getElementById('redShido'),
-        outputElemWhiteShido:            document.getElementById('whiteShido'),
-        outputElemRedOpponent:           document.getElementById('redOpponent'),
-        outputElemWhiteOpponent:         document.getElementById('whiteOpponent'),
-        outputElemRedClub:               document.getElementById('redClub'),
-        outputElemWhiteClub:             document.getElementById('whiteClub'),
-        inputElemCommunicationID:        document.getElementById('connID'),
-        inputElemTheme:                  document.getElementById('theme'),
-        inputElemLanguage:               document.getElementById('lang'),
-        inputElemDuration:               document.getElementById('duration'),
-        inputElemCountUpLimit:           document.getElementById('countUpLimit'),
-        inputElemCountUpLimitIppon:      document.getElementById('countUpLimitIppon'),
-        inputElemLockOut:                document.getElementById('lockOut'),
-        inputElemInvertGripSide:         document.getElementById('invertGripSide'),
-        inputElemInvertGripDisplay:      document.getElementById('invertGripDisplay'),
-        selectElemFightEndSound:         document.getElementById('fightEndSound'),
-        buttonElemFightEndSoundTest:     document.getElementById('fightEndSoundTest')
-    }
-
+    var viewConfig
     var translationConfig = {
         "settings": {
             "headline":      "#settings h1",
@@ -339,9 +315,53 @@
         }
     }
 
-    var appSettings   = Direzione.AppSettings.create()
-    var fightSettings = Direzione.FightSettings.create()
+    var appSettings       = Direzione.AppSettings.create()
+    var fightSettings     = Direzione.FightSettings.create()
     !fightSettings.getTimeUpSoundFile() && fightSettings.setTimeUpSoundFile('sounds/fight_end.ogg')
+
+    var translator        = Direzione.ViewTranslator.create(appSettings.getLanguage(), translationConfig)
+    var historyController = Direzione.HistoryController.create(appSettings)
+
+    var pl = Direzione.Playlist.create()
+
+    viewConfig = {
+        entryJigElem:                 document.getElementById('entryJig'),
+        entryWrapperElem:             document.getElementById('repertoire'),
+        selectorWhiteOpponentLockOut: '.white.lockOut',
+        selectorRedOpponentLockOut:   '.red.lockOut'
+    }
+    var repertoire = Direzione.Repertoire.create(pl, viewConfig)
+
+    Direzione.ThemeManager.changeThemeCSSForControlBoard(appSettings.getThemeID())
+
+    viewConfig = {
+        inputElemCommunicationID:        document.getElementById('connID'),
+        inputElemTheme:                  document.getElementById('theme'),
+        inputElemLanguage:               document.getElementById('lang'),
+        inputElemDuration:               document.getElementById('duration'),
+        inputElemCountUpLimit:           document.getElementById('countUpLimit'),
+        inputElemCountUpLimitIppon:      document.getElementById('countUpLimitIppon'),
+        inputElemLockOut:                document.getElementById('lockOut'),
+        inputElemInvertGripSide:         document.getElementById('invertGripSide'),
+        inputElemInvertGripDisplay:      document.getElementById('invertGripDisplay'),
+        selectElemFightEndSound:         document.getElementById('fightEndSound'),
+        buttonElemFightEndSoundTest:     document.getElementById('fightEndSoundTest')
+    }
+
+    Direzione.SettingsController.create(appSettings, fightSettings, viewConfig, translator)
+
+    viewConfig = {
+        groupJigElem:             document.getElementById('groupJig'),
+        personJigElem:            document.getElementById('personJig'),
+        inputElemGroupName:       document.getElementById('groupName'),
+        buttonElemAddGroupName:   document.getElementById('addGroup'),
+        inputElemPersonFirstName: document.getElementById('firstName'),
+        inputElemPersonLastName:  document.getElementById('lastName'),
+        inputElemPersonClubName:  document.getElementById('clubName'),
+        buttonElemAddPerson:      document.getElementById('addPerson')
+    }
+    Direzione.OpponentsController.create(viewConfig, translator)
+
 
     var persons = [
       Direzione.Person.create('John', 'Doe', 'Cheeky Wildcats'),
@@ -350,8 +370,7 @@
       Direzione.Person.create('Roberta', 'Hamilton', 'Growling Owls')
     ]
 
-    var pl = Direzione.Playlist.create()
-    var fightFactory = function (whiteOpponentPerson, redOpponentPerson) {
+    var fightFactory = function (fightSettings, whiteOpponentPerson, redOpponentPerson) {
         function playSound() {
             var audio = new Audio(fightSettings.getTimeUpSoundFile())
             audio.currentTime = 0
@@ -368,17 +387,28 @@
 
         this.insert(fight.on('timeUp', playSound))
         return fight
-    }.bind(pl)
+    }.bind(pl, fightSettings)
+
+
+    viewConfig = {
+        outputElemCountdown:             document.querySelector('#countdown span.display'),
+        outputElemStopwatchSeconds:      document.getElementById('countUpSec'),
+        outputElemStopwatchMilliseconds: document.getElementById('countUpMSec'),
+        outputElemRedScore:              document.getElementById('redScore'),
+        outputElemWhiteScore:            document.getElementById('whiteScore'),
+        outputElemRedShido:              document.getElementById('redShido'),
+        outputElemWhiteShido:            document.getElementById('whiteShido'),
+        outputElemRedOpponent:           document.getElementById('redOpponent'),
+        outputElemWhiteOpponent:         document.getElementById('whiteOpponent'),
+        outputElemRedClub:               document.getElementById('redClub'),
+        outputElemWhiteClub:             document.getElementById('whiteClub')
+    };
 
     var fight             = fightFactory(persons[0], persons[1])
     var board             = Direzione.Scoreboard.create(fight, viewConfig)
     var fightEmitter      = Direzione.FightEmitter.create(appSettings.getCommunicationID(), fight)
-    var translator        = Direzione.ViewTranslator.create(appSettings.getLanguage(), translationConfig)
     var fightController   = Direzione.FightController.create(fightEmitter, translator)
-    var historyController = Direzione.HistoryController.create(appSettings)
 
-    Direzione.ThemeManager.changeThemeCSSForControlBoard(appSettings.getThemeID())
-    Direzione.SettingsController.create(appSettings, fightSettings, viewConfig, translator)
     Direzione.ControlPanelController.create(fightEmitter, translator)
       .on('fightChange', function (cfight) {
         fight = cfight
@@ -393,26 +423,6 @@
     fightFactory(persons[1], persons[3])
     fightFactory(persons[0], persons[2])
 
-    viewConfig = {
-        groupJigElem:             document.getElementById('groupJig'),
-        personJigElem:            document.getElementById('personJig'),
-        inputElemGroupName:       document.getElementById('groupName'),
-        buttonElemAddGroupName:   document.getElementById('addGroup'),
-        inputElemPersonFirstName: document.getElementById('firstName'),
-        inputElemPersonLastName:  document.getElementById('lastName'),
-        inputElemPersonClubName:  document.getElementById('clubName'),
-        buttonElemAddPerson:      document.getElementById('addPerson')
-    }
-    Direzione.OpponentsController.create(viewConfig, translator);
-
-
-    viewConfig = {
-        entryJigElem:     document.getElementById('entryJig'),
-        entryWrapperElem: document.getElementById('repertoire'),
-        selectorWhiteOpponentLockOut: '.white.lockOut',
-        selectorRedOpponentLockOut:   '.red.lockOut'
-    }
-
-    Direzione.Repertoire.create(pl, viewConfig)
+    repertoire.refresh()
   </script>
 </html>

@@ -483,19 +483,12 @@ Direzione.OpponentsController = (function (OpponentGroup, Person) {
     }
 
     /**
-     * @param {String} name
+     *
+     * @param {Element} groupElem
      */
-    function _createGroup(name) {
-        if (_groupExists.call(this, name)) {
-            alert(this[' translator'].getTranslations().message['alert-group-exists']);
-            return
-        }
+    function _registerEventListeners(groupElem) {
+        var group = groupElem.group
 
-        var groupElem = this[' groupJig'].cloneNode(true)
-        var group     = OpponentGroup.create(name)
-
-        groupElem.group = group
-        groupElem.getElementsByTagName('caption')[0].innerText = name
         groupElem.querySelector('thead .group.remove').addEventListener(
             'click', function (groupElem, evt) {
                 if (confirm(
@@ -506,14 +499,14 @@ Direzione.OpponentsController = (function (OpponentGroup, Person) {
                 }
             }.bind(this, groupElem)
         )
-        groupElem.querySelector('th.hfn').innerText
-            = this[' translator'].getTranslations().groups.firstName
-        groupElem.querySelector('th.hln').innerText
-            = this[' translator'].getTranslations().groups.lastName
-        groupElem.querySelector('th.hcn').innerText
-            = this[' translator'].getTranslations().groups.club
 
-        group.on('add', function (group, person) {
+        groupElem.querySelector('.add').addEventListener('click', function (group, evt) {
+            var persDialogElem = document.getElementById('persons')
+            persDialogElem.group = group
+            persDialogElem.style.display = 'block'
+        }.bind(this, group))
+
+        group.on('add', function (groupElem, group, person) {
             var tr = this[' personJig'].cloneNode(true)
             tr.person = person
             tr.querySelector('.fname').innerText = person.getFirstName()
@@ -528,22 +521,46 @@ Direzione.OpponentsController = (function (OpponentGroup, Person) {
                 }
             }.bind(this, group, person))
             groupElem.querySelector('tbody').appendChild(tr)
-        }.bind(this, group))
+        }.bind(this, groupElem, group))
 
         group.on('remove', function (groupElem, person) {
             groupElem.querySelectorAll('tbody tr').forEach(function (tr) {
                 tr.person === person && tr.remove()
             })
         }.bind(this, groupElem))
+    }
 
-        groupElem.querySelector('.add').addEventListener('click', function (evt) {
-            var persDialogElem = document.getElementById('persons')
-            persDialogElem.group = group
-            persDialogElem.style.display = 'block'
-        })
+    /**
+     * @param {Element} groupElem
+     */
+    function _setupGroupElement(groupElem) {
+        groupElem.getElementsByTagName('caption')[0].innerText = groupElem.group.getName()
+        groupElem.querySelector('th.hfn').innerText
+            = this[' translator'].getTranslations().groups.firstName
+        groupElem.querySelector('th.hln').innerText
+            = this[' translator'].getTranslations().groups.lastName
+        groupElem.querySelector('th.hcn').innerText
+            = this[' translator'].getTranslations().groups.club
+    }
+
+    /**
+     * @param {String} name
+     */
+    function _createGroup(name) {
+        if (_groupExists.call(this, name)) {
+            alert(this[' translator'].getTranslations().message['alert-group-exists']);
+            return
+        }
+
+        var groupElem = this[' groupJig'].cloneNode(true)
+        var group     = OpponentGroup.create(name)
+
+        groupElem.group = group
+        this[' groups'].push(group)
+        _setupGroupElement.call(this, groupElem)
+        _registerEventListeners.call(this, groupElem)
 
         this[' groupPanel'].appendChild(groupElem)
-        this[' groups'].push(group)
     }
 
     /**
