@@ -205,9 +205,17 @@
             <img class="close" src="node_modules/lucide-static/icons/x.svg" alt="close" />
             <h1>Groups</h1>
             <form>
-              <label for="groupName">Group name: </label>
-              <input id="groupName" type="text" />
-              <button id="addGroup">add</button>
+              <div>
+                <label for="groupName">Group name: </label>
+                <input id="groupName" type="text" />
+                <button id="addGroup">add</button>
+              </div>
+
+              <div>
+                <label for="tournamentName">Tournament name: </label>
+                <input id="tournamentName" type="text" />
+                <button id="buildTournament">build</button>
+              </div>
             </form>
 
             <table id="groupJig" class="group">
@@ -311,7 +319,9 @@
         "groups": {
           "headline": "#groups h1",
           "groupName": "#groups label[for=groupName]",
-          "addButton": "#groups #addGroup"
+          "addButton": "#groups #addGroup",
+          "tournamentName": "#groups label[for=tournamentName]",
+          "buildButton": "#groups #buildTournament"
         }
     }
 

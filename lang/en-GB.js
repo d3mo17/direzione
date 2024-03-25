@@ -47,9 +47,11 @@ Direzione.translation = {
     "groups": {
         "headline": "Groups",
         "groupName": "Group name: ",
+        "tournamentName": "Tournament name: ",
         "firstName": "First name",
         "lastName": "Last name",
         "club": "Club name",
-        "addButton": "add"
+        "addButton": "add",
+        "buildButton": "build"
     }
 }

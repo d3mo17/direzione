@@ -9,6 +9,16 @@
     padding: 0 20px;
 }
 
+        #groups form div {
+            padding: 10px;
+            display: inline-flex;
+        }
+
+        #groups form div label {
+            padding-right: 10px;
+            line-height: 27px;
+        }
+
     #groups input {
         caret-color: black !important;
         font-size: 2vh;
