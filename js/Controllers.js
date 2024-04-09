@@ -443,13 +443,18 @@ Direzione.HistoryController = (function (Utils) {
 })(Direzione.Utils)
 
 
-Direzione.OpponentsController = (function (OpponentGroup, Person) {
+Direzione.OpponentsController = (function (OpponentGroup, Person, RoundRobinTournamentIterator) {
 
     /**
-     * @param {Object} viewConfig
+     * @param      {Tournament}     tournament
+     * @param      {Repertoire}     repertoire
+     * @param      {Object}         viewConfig
+     * @param      {ViewTranslator} translator
      */
-    function OpponentsController(viewConfig, translator) {
+    function OpponentsController(tournament, repertoire, viewConfig, translator) {
         this[' groups']     = []
+        this[' tournament'] = tournament
+        this[' repertoire'] = repertoire
         this[' translator'] = translator
         this[' groupPanel'] = viewConfig.groupJigElem.parentNode
         this[' personJig']  = viewConfig.personJigElem.cloneNode(true)
@@ -598,6 +603,18 @@ Direzione.OpponentsController = (function (OpponentGroup, Person) {
             )
         }.bind(this))
 
+        viewConfig.buttonElemBuildTournament.addEventListener('click', function(evt) {
+            var pl = this[' tournament'].getPlaylist()
+            evt.preventDefault()
+            evt.stopPropagation()
+            pl.empty()
+
+            this[' tournament']
+                .setGroups(this[' groups'])
+                .build(RoundRobinTournamentIterator)
+            this[' repertoire'].refresh()
+        }.bind(this))
+
         document.querySelector('#menue .opponents').addEventListener('click', function (evt) {
             Direzione.State.keyControlScoreboard = false
             document.getElementById('groups').style.display = 'block'
@@ -645,13 +662,16 @@ Direzione.OpponentsController = (function (OpponentGroup, Person) {
          * @static
          * @method     create
          *
-         * @param      {Object}   viewConfig
+         * @param      {Tournament}     tournament
+         * @param      {Repertoire}     repertoire
+         * @param      {Object}         viewConfig
+         * @param      {ViewTranslator} translator
          *
          * @memberof   "Direzione.OpponentsController"
          * @returns    {OpponentsController}
          */
-        create: function (viewConfig, translator) {
-            return new OpponentsController(viewConfig, translator)
+        create: function (tournament, repertoire, viewConfig, translator) {
+            return new OpponentsController(tournament, repertoire, viewConfig, translator)
         }
     }
-})(Direzione.OpponentGroup, Direzione.Person)
+})(Direzione.OpponentGroup, Direzione.Person, Direzione.RoundRobinTournamentIterator)

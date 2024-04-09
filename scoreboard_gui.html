@@ -332,7 +332,7 @@
     var translator        = Direzione.ViewTranslator.create(appSettings.getLanguage(), translationConfig)
     var historyController = Direzione.HistoryController.create(appSettings)
 
-    var pl = Direzione.Playlist.create()
+    var tournament        = Direzione.Tournament.create(fightSettings)
 
     viewConfig = {
         entryJigElem:                 document.getElementById('entryJig'),
@@ -340,7 +340,7 @@
         selectorWhiteOpponentLockOut: '.white.lockOut',
         selectorRedOpponentLockOut:   '.red.lockOut'
     }
-    var repertoire = Direzione.Repertoire.create(pl, viewConfig)
+    var repertoire = Direzione.Repertoire.create(tournament, viewConfig)
 
     Direzione.ThemeManager.changeThemeCSSForControlBoard(appSettings.getThemeID())
 
@@ -361,44 +361,17 @@
     Direzione.SettingsController.create(appSettings, fightSettings, viewConfig, translator)
 
     viewConfig = {
-        groupJigElem:             document.getElementById('groupJig'),
-        personJigElem:            document.getElementById('personJig'),
-        inputElemGroupName:       document.getElementById('groupName'),
-        buttonElemAddGroupName:   document.getElementById('addGroup'),
-        inputElemPersonFirstName: document.getElementById('firstName'),
-        inputElemPersonLastName:  document.getElementById('lastName'),
-        inputElemPersonClubName:  document.getElementById('clubName'),
-        buttonElemAddPerson:      document.getElementById('addPerson')
+        groupJigElem:              document.getElementById('groupJig'),
+        personJigElem:             document.getElementById('personJig'),
+        inputElemGroupName:        document.getElementById('groupName'),
+        buttonElemAddGroupName:    document.getElementById('addGroup'),
+        inputElemPersonFirstName:  document.getElementById('firstName'),
+        inputElemPersonLastName:   document.getElementById('lastName'),
+        inputElemPersonClubName:   document.getElementById('clubName'),
+        buttonElemAddPerson:       document.getElementById('addPerson'),
+        buttonElemBuildTournament: document.getElementById('buildTournament')
     }
-    Direzione.OpponentsController.create(viewConfig, translator)
-
-
-    var persons = [
-        Direzione.Person.create('John', 'Doe', 'Cheeky Wildcats'),
-        Direzione.Person.create('Alexander', 'Randomchewsky', 'Tornado Wanderers'),
-        Direzione.Person.create('Nathalie', 'Smith', 'Stomp Along Mice'),
-        Direzione.Person.create('Roberta', 'Hamilton', 'Growling Owls')
-    ]
-
-    var fightFactory = function (fightSettings, whiteOpponentPerson, redOpponentPerson) {
-        function playSound() {
-            var audio = new Audio(fightSettings.getTimeUpSoundFile())
-            audio.currentTime = 0
-            audio.oncanplay = function () {
-                audio.play()
-            }
-        }
-
-        var fight = Direzione.Fight.create(
-            fightSettings,
-            Direzione.Opponent.create(whiteOpponentPerson),
-            Direzione.Opponent.create(redOpponentPerson)
-        )
-
-        this.insert(fight.on('timeUp', playSound))
-        return fight
-    }.bind(pl, fightSettings)
-
+    Direzione.OpponentsController.create(tournament, repertoire, viewConfig, translator)
 
     viewConfig = {
         outputElemCountdown:             document.querySelector('#countdown span.display'),
@@ -414,7 +387,11 @@
         outputElemWhiteClub:             document.getElementById('whiteClub')
     };
 
-    var fight           = fightFactory(persons[0], persons[1])
+    var fight = Direzione.Fight.create(
+        fightSettings,
+        Direzione.Opponent.create(Direzione.Person.create('', '', '')),
+        Direzione.Opponent.create(Direzione.Person.create('', '', ''))
+    )
     var board           = Direzione.Scoreboard.create(fight, viewConfig)
     var fightEmitter    = Direzione.FightEmitter.create(appSettings.getCommunicationID(), fight)
     var fightController = Direzione.FightController.create(fightEmitter, translator)
@@ -429,11 +406,5 @@
         .on('fightHistoryTrigger', function (fight) {
             historyController.setFight(fight).show()
         })
-
-    fightFactory(persons[2], persons[3])
-    fightFactory(persons[1], persons[3])
-    fightFactory(persons[0], persons[2])
-
-    repertoire.refresh()
   </script>
 </html>
