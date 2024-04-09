@@ -92,7 +92,7 @@
     var appSettings = Direzione.AppSettings.create()
 
     Direzione.ThemeManager.changeThemeCSSForRemoteBoard(appSettings.getThemeID())
-    Direzione.FightReceiver.create(appSettings.getCommunicationID(), viewConfig)
+    Direzione.FightReceiverLocal.create(appSettings.getCommunicationID(), viewConfig)
     appSettings.toStorage()
   </script>
 </html>

@@ -393,7 +393,7 @@
         Direzione.Opponent.create(Direzione.Person.create('', '', ''))
     )
     var board           = Direzione.Scoreboard.create(fight, viewConfig)
-    var fightEmitter    = Direzione.FightEmitter.create(appSettings.getCommunicationID(), fight)
+    var fightEmitter    = Direzione.FightEmitterLocal.create(appSettings.getCommunicationID(), fight)
     var fightController = Direzione.FightController.create(fightEmitter, translator)
 
     Direzione.ControlPanelController

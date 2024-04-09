@@ -21,6 +21,8 @@ It is important to execute all installation steps mentioned above, before direzi
 Open file `scoreboard_gui.html` in a browser window and file `remote_scorboard.html` in another browser window.
 You can also open `all_in_one_demo.html` instead. This file uses frames to load the other two documents in one browser window, so you can see what happens at a glance.
 
+> Note: Because this project is developed in a chromium based browser, it will work there for best.
+
 ## Control keys in scoreboard gui
 
 | Key | Funtion |
@@ -47,11 +49,18 @@ Add new sound file to the directory `sounds` and add a new entry in file `file_l
 
 ## Connection Technique
 
-The connection beetween `scoreboard_gui.html` and `remote_scorboard.html` will be handled trough WebRTC. The connection will be triggered by clicking the red button in the right upper corner of the scoreboard GUI. If the connection become established, the background color of the button changes to green.
+The connection beetween `scoreboard_gui.html` and `remote_scorboard.html` will be handled trough WebRTC.
+Therefore you need a configured network (NAT) to be able getting ICE candidates. The simplest way to get a working NAT, out of the box, is to connect your machine to a router. Otherwise you have to dive deep in the technique to enable fetching ICE candidates used for establishing the connection.
+
+As default the signaling is realized by a broker using the local storage. So you can connect between two windows in the same browser without the need of internet connectivity.
+
+But if you want to connect between two machines in your LAN or simply between two different browsers, you have to replace the fight emitter and receiver types in the code (i. e. `Direzione.FightEmitterLocal` to ``Direzione.FightEmitter`). In that case, you need internet connectivity - for now!
+
+At the end the connecting will be triggered by clicking the red button in the right upper corner of the scoreboard GUI. If the connection become established, the background color of the button changes to green.
 
 ### Troubleshooting
 
-The ability to connect between scoreboards depends on a configured network. If you are not connected to a network, to get it work, you have to setup an ip address to your computer manually.
+The ability to connect between scoreboards depends on a configured network. As simplest solution connect your machine to a router.
 
 If you use a chromium based browser and the connection between the scoreboards will not get established (even if your computers network is configured), then move to "chrome://flags" and disable Option "Anonymize local IPs exposed by WebRTC" - try again afterwards!
 After the connection between scoreboards was established once, you can switch the Option back.
