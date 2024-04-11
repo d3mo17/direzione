@@ -102,6 +102,10 @@
     margin-left: -1em;
   }
 
+  #repertoire li.selected::before {
+    content: "\27A2";
+    color: white;
+  }
   #repertoire li.running::before {
     color: green;
   }

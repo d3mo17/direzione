@@ -297,7 +297,13 @@ Direzione.ControlPanelController = (function () {
         return fightIsRunning;
     }
 
-    function _registerUIEvents () {
+    function _deselectRepertoire() {
+        document.getElementById('repertoire').childNodes.forEach(function (li) {
+            li.classList.contains('selected') && li.classList.remove('selected')
+        })
+    }
+
+    function _registerUIEvents() {
         var remoteIndicator = document.getElementById('remoteIndicator')
 
         this[' emitter'].on('establish', function () { remoteIndicator.className = 'on' })
@@ -317,6 +323,8 @@ Direzione.ControlPanelController = (function () {
                     return
                 }
 
+                _deselectRepertoire.call(this)
+                evt.target.parentNode.classList.add('selected')
                 _dispatch.call(this, 'fightChange', evt.target.parentNode.fight)
             }
         }.bind(this))
