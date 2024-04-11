@@ -418,8 +418,9 @@ Direzione.HistoryController = (function (Utils) {
             rowElem.appendChild(cellElem)
 
             cellElem = document.createElement('td')
-            cellElem.innerText = ! Number.isInteger(row[2]) ? row[2] :
-                row[1] === 'toketa'
+            cellElem.innerText = ! Number.isInteger(row[2])
+                ? row[2] + (typeof row[3] === 'undefined' ? '' : ': ' + row[3])
+                : row[1] === 'toketa'
                     ? (Math.floor(row[2] / 1000)%60)+'.'+(Math.floor(row[2]%1000)+'').padStart(3,'0')
                     : Utils.getMinSecDisplay(row[2])
             rowElem.appendChild(cellElem)
