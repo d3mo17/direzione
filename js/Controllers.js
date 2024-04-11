@@ -316,16 +316,18 @@ Direzione.ControlPanelController = (function () {
         }.bind(this))
 
         document.getElementById('repertoire').addEventListener('click', function (evt) {
+            var fight = evt.target.parentNode.fight
+
             if (_avoidControl.call(this)) return
-            if (typeof evt.target.parentNode.fight !== 'undefined') {
+            if (typeof fight !== 'undefined') {
                 if (evt.target.matches('img.history')) {
-                    _dispatch.call(this, 'fightHistoryTrigger', evt.target.parentNode.fight)
+                    _dispatch.call(this, 'fightHistoryTrigger', fight)
                     return
                 }
 
                 _deselectRepertoire.call(this)
                 evt.target.parentNode.classList.add('selected')
-                _dispatch.call(this, 'fightChange', evt.target.parentNode.fight)
+                _dispatch.call(this, 'fightChange', fight)
             }
         }.bind(this))
 

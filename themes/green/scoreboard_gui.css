@@ -106,10 +106,10 @@
     color: white;
   }
   #repertoire li.running::before {
-    color: green;
+    color: green !important;
   }
   #repertoire li.completed::before {
-    color: red;
+    color: red !important;
   }
 
     #entryJig {
