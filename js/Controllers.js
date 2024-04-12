@@ -19,6 +19,11 @@ Direzione.FightController = (function (Utils) {
     }
 
     function _confirmFinish() {
+        if (this[' fightEmitter'].getFight().isStopped()) {
+            alert(this[' translator'].getTranslations().message['alert-already-finish'])
+            return
+        }
+
         if (confirm(this[' translator'].getTranslations().message['confirm-finish'])) {
             this[' fightEmitter'].getFight().stop()
         }

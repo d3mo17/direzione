@@ -3,6 +3,7 @@ Direzione.translation = {
         "confirm-reset": "Sure? Reset fight?",
         "confirm-finish": "Sure? Finish fight?",
         "confirm-remove": "Sure, remove '%s'?",
+        "alert-already-finish": "The fight was finished already!",
         "alert-group-exists": "A group with this name already exists!",
         "alert-no-control-during-fight": "Only control of running fight is possible!"
     },
