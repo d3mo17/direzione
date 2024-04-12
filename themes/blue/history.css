@@ -15,3 +15,8 @@
         top: 10px;
         height: 5vh;
     }
+
+    #history #logWrapper {
+        overflow-y: scroll;
+        height: 90%;
+    }
