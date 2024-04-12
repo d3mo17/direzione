@@ -65,6 +65,8 @@ The ability to connect between scoreboards depends on a configured network. As s
 If you use a chromium based browser and the connection between the scoreboards will not get established (even if your computers network is configured), then move to "chrome://flags" and disable Option "Anonymize local IPs exposed by WebRTC" - try again afterwards!
 After the connection between scoreboards was established once, you can switch the Option back.
 
+When the connection can still not be established, refresh the browser window of the remote scoreboard first and refresh the browser window for the GUI of the scoreboard afterwards - try again to connect.
+
 ## License
 
 GPL-3.0
