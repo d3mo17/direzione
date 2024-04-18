@@ -151,6 +151,11 @@
   height: 100vh;
 }
 
+  #fightlist {
+    overflow-y: scroll;
+    height: -webkit-fill-available;
+  }
+
   #remoteIndicator {
     color: floralwhite;
     width: 30vw;
