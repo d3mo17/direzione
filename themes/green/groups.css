@@ -43,3 +43,40 @@
         #groups table.group td {
             padding-right: 10px;
         }
+
+#groupWrapper {
+    position: absolute;
+    overflow-y: scroll;
+    height: 75vh;
+    width: 58vw;
+    top: 18vh;
+    left: 5vw;
+}
+
+#groups h2 {
+    position: absolute;
+    top: 13vh;
+    left: 65vw;
+}
+
+#tournamentWrapper {
+    position: absolute;
+    overflow-y: scroll;
+    height: 75vh;
+    width: 30vw;
+    top: 18vh;
+    right: 5vw;
+}
+
+    #groups #tournamentList {
+        list-style-type: none;
+    }
+
+        #groups img.tournament {
+            vertical-align: middle;
+        }
+
+#groups #tournamentInputs {
+    position: absolute;
+    right: 3vw;
+}

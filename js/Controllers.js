@@ -479,16 +479,21 @@ Direzione.OpponentsController = (function (OpponentGroup, Person, RoundRobinTour
         this[' tournament'] = tournament
         this[' repertoire'] = repertoire
         this[' translator'] = translator
-        this[' groupPanel'] = viewConfig.groupJigElem.parentNode
+        this[' groupPanel'] = viewConfig.groupWrapperElem
         this[' personJig']  = viewConfig.personJigElem.cloneNode(true)
         this[' personJig'].removeAttribute('id')
-        viewConfig.personJigElem.remove();
+        viewConfig.personJigElem.remove()
         this[' groupJig']   = viewConfig.groupJigElem.cloneNode(true)
         this[' groupJig'].removeAttribute('id')
-        viewConfig.groupJigElem.remove();
+        viewConfig.groupJigElem.remove()
+        this[' tournamentWrapperElem'] = viewConfig.tournamentWrapperElem
+        this[' tournamentEntryJig'] = viewConfig.tournamentEntryJigElem.cloneNode(true)
+        this[' tournamentEntryJig'].removeAttribute('id')
+        viewConfig.tournamentEntryJigElem.remove()
 
         _registerUIEvents.call(this, viewConfig)
         _restoreGroups.call(this)
+        _restoreTournament.call(this)
     }
 
     /**
@@ -646,6 +651,25 @@ Direzione.OpponentsController = (function (OpponentGroup, Person, RoundRobinTour
         }, this)
     }
 
+    function _restoreTournament() {
+        Object
+            .keys(localStorage).filter(function (key) { return key.startsWith('tournament.') })
+            .map(function (key) { return key.replace(/^tournament\./, '') })
+            .forEach(_addTournamentElement.bind(this));
+    }
+
+    function _addTournamentElement(name) {
+        var storageKey = 'tournament.' + name
+        var tournamentEntryElem = this[' tournamentEntryJig'].cloneNode(true)
+
+        tournamentEntryElem.storageKey = storageKey
+        tournamentEntryElem.tournamentName = name
+        tournamentEntryElem.querySelector('[class="label"]').innerText = name
+        this[' tournamentWrapperElem'].appendChild(tournamentEntryElem)
+
+        return storageKey
+    }
+
     /**
      * @private
      * @param {Object} viewConfig
@@ -683,7 +707,10 @@ Direzione.OpponentsController = (function (OpponentGroup, Person, RoundRobinTour
                 .setGroups(this[' groups'])
                 .build(RoundRobinTournamentIterator)
 
-            localStorage.setItem(name, JSON.stringify(this[' tournament'].toStruct()))
+            localStorage.setItem(
+                _addTournamentElement.call(this, name),
+                JSON.stringify(this[' tournament'].toStruct())
+            )
             this[' repertoire'].refresh()
         }.bind(this))
 
@@ -714,6 +741,21 @@ Direzione.OpponentsController = (function (OpponentGroup, Person, RoundRobinTour
         document.querySelector('#persons .close').addEventListener('click', function (evt) {
             document.getElementById('persons').style.display = 'none'
         })
+
+        this[' tournamentWrapperElem'].addEventListener('click', function (evt) {
+            if (evt.target.matches('img.tournament.remove')) {
+                this[' translator'].getTranslations()
+                    .then(function (translation) {
+                        var listElem = evt.target.parentNode
+                        if (confirm(
+                            translation.message['confirm-remove'].replace('%s', listElem.tournamentName)
+                        )) {
+                            localStorage.removeItem(listElem.storageKey)
+                            listElem.remove()
+                        }
+                    }.bind(this))
+            }
+        }.bind(this))
     }
 
     /**
