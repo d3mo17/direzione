@@ -3,12 +3,20 @@ Direzione.ViewTranslator = (function (Utils, Settings) {
     var LANGUAGES = Settings.availableLanguages()
 
     function ViewTranslator(lang, selectors) {
+        var deferred = {resolve: null, reject: null}
         this[' selectors'] = selectors
         this.setLanguage(lang)
+
+        this[' deferred'] = deferred
+        this[' deferred'].promise = new Promise(function (resolve, reject) {
+            deferred.resolve = resolve
+            deferred.reject  = reject
+        })
     }
 
-    ViewTranslator.prototype.getTranslations = function() {
-        return this[' translations']
+    ViewTranslator.prototype.getTranslations = async function() {
+        this[' translations'] = await this[' deferred'].promise
+        return JSON.parse(JSON.stringify(this[' translations']))
     }
 
     ViewTranslator.prototype.setLanguage = function (lang) {
@@ -37,10 +45,10 @@ Direzione.ViewTranslator = (function (Utils, Settings) {
     }
 
     function _translate(transObj) {
-        this[' translations'] = transObj
         Object.keys(this[' selectors']).forEach(function (key) {
             _walkDown(this[' selectors'][key], key, transObj)
         }, this)
+        this[' deferred'].resolve(transObj)
     }
 
     // Module-API

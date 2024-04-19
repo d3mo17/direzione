@@ -12,19 +12,21 @@ Direzione.FightController = (function (Utils) {
         _registerKeyBoardEvents.call(this)
     }
 
-    function _confirmReset() {
-        if (confirm(this[' translator'].getTranslations().message['confirm-reset'])) {
+    async function _confirmReset() {
+        var translation = await this[' translator'].getTranslations()
+        if (confirm(translation.message['confirm-reset'])) {
             this[' fightEmitter'].getFight().reset()
         }
     }
 
-    function _confirmFinish() {
+    async function _confirmFinish() {
+        var translation = await this[' translator'].getTranslations()
         if (this[' fightEmitter'].getFight().isStopped()) {
-            alert(this[' translator'].getTranslations().message['alert-already-finish'])
+            alert(translation.message['alert-already-finish'])
             return
         }
 
-        if (confirm(this[' translator'].getTranslations().message['confirm-finish'])) {
+        if (confirm(translation.message['confirm-finish'])) {
             this[' fightEmitter'].getFight().stop()
         }
     }
@@ -296,9 +298,14 @@ Direzione.ControlPanelController = (function () {
 
     function _avoidControl() {
         var fightIsRunning = this[' emitter'].getFight().isRunning()
-        if (fightIsRunning) {
-            alert(this[' translator'].getTranslations().message['alert-no-control-during-fight'])
-        }
+
+        this[' translator'].getTranslations()
+            .then(function (translation) {
+                if (fightIsRunning) {
+                    alert(translation.message['alert-no-control-during-fight'])
+                }
+            })
+
         return fightIsRunning;
     }
 
@@ -481,6 +488,7 @@ Direzione.OpponentsController = (function (OpponentGroup, Person, RoundRobinTour
         viewConfig.groupJigElem.remove();
 
         _registerUIEvents.call(this, viewConfig)
+        _restoreGroups.call(this)
     }
 
     /**
@@ -501,6 +509,7 @@ Direzione.OpponentsController = (function (OpponentGroup, Person, RoundRobinTour
             return obj !== this;
         }.bind(groupElem.group))
         groupElem.remove()
+        _persistGroups.call(this)
     }
 
     /**
@@ -512,12 +521,13 @@ Direzione.OpponentsController = (function (OpponentGroup, Person, RoundRobinTour
 
         groupElem.querySelector('thead .group.remove').addEventListener(
             'click', function (groupElem, evt) {
-                if (confirm(
-                        this[' translator'].getTranslations().message['confirm-remove']
-                            .replace('%s', groupElem.group.getName())
-                )) {
-                    _removeGroup.call(this, groupElem)
-                }
+                this[' translator'].getTranslations()
+                    .then(function (translation) {
+                        if (confirm(
+                                translation.message['confirm-remove']
+                                    .replace('%s', groupElem.group.getName())
+                        )) _removeGroup.call(this, groupElem)
+                    }.bind(this))
             }.bind(this, groupElem)
         )
 
@@ -534,12 +544,13 @@ Direzione.OpponentsController = (function (OpponentGroup, Person, RoundRobinTour
             tr.querySelector('.lname').innerText = person.getLastName()
             tr.querySelector('.clubname').innerText = person.getClubName()
             tr.querySelector('.ctrls .remove').addEventListener('click', function (group, person) {
-                if (confirm(
-                    this[' translator'].getTranslations().message['confirm-remove']
-                        .replace('%s', person.getFirstName() + ' ' + person.getLastName())
-                )) {
-                    group.removePerson(person)
-                }
+                this[' translator'].getTranslations()
+                    .then(function (translation) {
+                        if (confirm(
+                            translation.message['confirm-remove']
+                                .replace('%s', person.getFirstName() + ' ' + person.getLastName())
+                        )) group.removePerson(person)
+                    }.bind(this))
             }.bind(this, group, person))
             groupElem.querySelector('tbody').appendChild(tr)
         }.bind(this, groupElem, group))
@@ -548,31 +559,27 @@ Direzione.OpponentsController = (function (OpponentGroup, Person, RoundRobinTour
             groupElem.querySelectorAll('tbody tr').forEach(function (tr) {
                 tr.person === person && tr.remove()
             })
+            _persistGroups.call(this)
         }.bind(this, groupElem))
     }
 
     /**
      * @param {Element} groupElem
      */
-    function _setupGroupElement(groupElem) {
+    async function _setupGroupElement(groupElem) {
+        var translation = await this[' translator'].getTranslations()
+        var groupTrans = translation.groups
+
         groupElem.getElementsByTagName('caption')[0].innerText = groupElem.group.getName()
-        groupElem.querySelector('th.hfn').innerText
-            = this[' translator'].getTranslations().groups.firstName
-        groupElem.querySelector('th.hln').innerText
-            = this[' translator'].getTranslations().groups.lastName
-        groupElem.querySelector('th.hcn').innerText
-            = this[' translator'].getTranslations().groups.club
+        groupElem.querySelector('th.hfn').innerText = groupTrans.firstName
+        groupElem.querySelector('th.hln').innerText = groupTrans.lastName
+        groupElem.querySelector('th.hcn').innerText = groupTrans.club
     }
 
     /**
      * @param {String} name
      */
-    function _createGroup(name) {
-        if (_groupExists.call(this, name)) {
-            alert(this[' translator'].getTranslations().message['alert-group-exists']);
-            return
-        }
-
+    function _forceCreateGroupWithoutPersistance(name) {
         var groupElem = this[' groupJig'].cloneNode(true)
         var group     = OpponentGroup.create(name)
 
@@ -582,10 +589,26 @@ Direzione.OpponentsController = (function (OpponentGroup, Person, RoundRobinTour
         _registerEventListeners.call(this, groupElem)
 
         this[' groupPanel'].appendChild(groupElem)
+
+        return group
     }
 
     /**
-     *
+     * @param {String} name
+     */
+    async function _createGroup(name) {
+        var translation = await this[' translator'].getTranslations()
+
+        if (_groupExists.call(this, name)) {
+            alert(translation.message['alert-group-exists'])
+            return
+        }
+
+        _forceCreateGroupWithoutPersistance.call(this, name)
+        _persistGroups.call(this)
+    }
+
+    /**
      * @param {OpponentGroup} group
      * @param {String} fname
      * @param {String} lname
@@ -594,6 +617,33 @@ Direzione.OpponentsController = (function (OpponentGroup, Person, RoundRobinTour
     function _createAndAddPersonToGroup(group, fname, lname, cname) {
         var pers = Person.create(fname, lname, cname)
         group.addPerson(pers)
+    }
+
+    function _persistGroups() {
+        localStorage.setItem('groups', JSON.stringify(
+            this[' groups'].map(function (group) { return group.toStruct() })
+        ))
+    }
+
+    function _restoreGroups() {
+        var groups = localStorage.getItem('groups')
+
+        if (!groups) return
+
+        groups = JSON.parse(groups)
+        groups.forEach(function (groupStruct) {
+            var group = _forceCreateGroupWithoutPersistance.call(this, groupStruct.name)
+
+            groupStruct.persons.forEach(function (personStruct) {
+                _createAndAddPersonToGroup.call(
+                    this,
+                    group,
+                    personStruct.firstName,
+                    personStruct.lastName,
+                    personStruct.club
+                )
+            }, this)
+        }, this)
     }
 
     /**
@@ -617,17 +667,23 @@ Direzione.OpponentsController = (function (OpponentGroup, Person, RoundRobinTour
                 viewConfig.inputElemPersonLastName.value,
                 viewConfig.inputElemPersonClubName.value
             )
+            _persistGroups.call(this)
         }.bind(this))
 
         viewConfig.buttonElemBuildTournament.addEventListener('click', function(evt) {
             var pl = this[' tournament'].getPlaylist()
+            var name = viewConfig.inputElemTournamentName.value
+
             evt.preventDefault()
             evt.stopPropagation()
             pl.empty()
 
             this[' tournament']
+                .setName(name)
                 .setGroups(this[' groups'])
                 .build(RoundRobinTournamentIterator)
+
+            localStorage.setItem(name, JSON.stringify(this[' tournament'].toStruct()))
             this[' repertoire'].refresh()
         }.bind(this))
 
@@ -635,15 +691,18 @@ Direzione.OpponentsController = (function (OpponentGroup, Person, RoundRobinTour
             Direzione.State.keyControlScoreboard = false
             document.getElementById('groups').style.display = 'block'
 
-            document.querySelectorAll('#groups th.hfn').forEach(function (elem) {
-                elem.innerText = this[' translator'].getTranslations().groups.firstName
-            }, this)
-            document.querySelectorAll('#groups th.hln').forEach(function (elem) {
-                elem.innerText = this[' translator'].getTranslations().groups.lastName
-            }, this)
-            document.querySelectorAll('#groups th.hcn').forEach(function (elem) {
-                elem.innerText = this[' translator'].getTranslations().groups.club
-            }, this)
+            this[' translator'].getTranslations()
+                .then(function (translation) {
+                    document.querySelectorAll('#groups th.hfn').forEach(function (elem) {
+                        elem.innerText = translation.groups.firstName
+                    }, this)
+                    document.querySelectorAll('#groups th.hln').forEach(function (elem) {
+                        elem.innerText = translation.groups.lastName
+                    }, this)
+                    document.querySelectorAll('#groups th.hcn').forEach(function (elem) {
+                        elem.innerText = translation.groups.club
+                    }, this)
+                }.bind(this))
         }.bind(this))
 
         document.querySelector('#groups .close').addEventListener('click', function (evt) {

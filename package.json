@@ -10,7 +10,7 @@
     "dependencies": {
         "@tybys/find-npm-prefix": "^2.0.0",
         "csv-parse": "^5.5.2",
-        "direzione-lib": "^1.0",
+        "direzione-lib": "^1.1",
         "durata": "^1.6.0",
         "lucide-static": "^0.312.0",
         "peerjs": "^1.5.1",
