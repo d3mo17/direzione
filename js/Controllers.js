@@ -618,9 +618,10 @@ Direzione.OpponentsController = (function (OpponentGroup, Person, RoundRobinTour
      * @param {String} fname
      * @param {String} lname
      * @param {String} cname
+     * @param {String} uuid
      */
-    function _createAndAddPersonToGroup(group, fname, lname, cname) {
-        var pers = Person.create(fname, lname, cname)
+    function _createAndAddPersonToGroup(group, fname, lname, cname, uuid) {
+        var pers = Person.create(fname, lname, cname, uuid)
         group.addPerson(pers)
     }
 
@@ -645,7 +646,8 @@ Direzione.OpponentsController = (function (OpponentGroup, Person, RoundRobinTour
                     group,
                     personStruct.firstName,
                     personStruct.lastName,
-                    personStruct.club
+                    personStruct.club,
+                    personStruct.uuid
                 )
             }, this)
         }, this)
