@@ -493,7 +493,7 @@ Direzione.OpponentsController = (function (OpponentGroup, Person, RoundRobinTour
 
         _registerUIEvents.call(this, viewConfig)
         _restoreGroups.call(this)
-        _restoreTournament.call(this)
+        _restoreTournaments.call(this)
     }
 
     /**
@@ -651,7 +651,16 @@ Direzione.OpponentsController = (function (OpponentGroup, Person, RoundRobinTour
         }, this)
     }
 
-    function _restoreTournament() {
+    function _clearGroups() {
+        var nodes = this[' groupPanel'].childNodes
+        while(0 < nodes.length) {
+            nodes[0].remove()
+        }
+        this[' groups'] = []
+        _persistGroups.call(this)
+    }
+
+    function _restoreTournaments() {
         Object
             .keys(localStorage).filter(function (key) { return key.startsWith('tournament.') })
             .map(function (key) { return key.replace(/^tournament\./, '') })
@@ -754,6 +763,17 @@ Direzione.OpponentsController = (function (OpponentGroup, Person, RoundRobinTour
                             listElem.remove()
                         }
                     }.bind(this))
+            }
+
+            if (evt.target.matches('#tournamentList .label')) {
+                var listElem = evt.target.parentNode
+                var tournamentJSON = localStorage.getItem(listElem.storageKey)
+                var tournament = JSON.parse(tournamentJSON)
+
+                _clearGroups.apply(this)
+
+                localStorage.setItem('groups', JSON.stringify(tournament['groups']))
+                _restoreGroups.apply(this)
             }
         }.bind(this))
     }
