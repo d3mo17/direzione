@@ -761,6 +761,7 @@ Direzione.OpponentsController = (function (OpponentGroup, Person, RoundRobinTour
                 .setName(name)
                 .setGroups(this[' groups'])
                 .build(RoundRobinTournamentIterator)
+            viewConfig.tournamentHeadlineElem.innerText = name
 
             localStorage.setItem(
                 _addTournamentElement.call(this, name),
@@ -847,6 +848,7 @@ Direzione.OpponentsController = (function (OpponentGroup, Person, RoundRobinTour
                 this[' tournament'].setName(tournament.name)
                 this[' tournament'].setGroups(groups)
 
+                viewConfig.tournamentHeadlineElem.innerText = tournament.name
                 this[' repertoire'].refresh()
 
                 _clearGroups.apply(this)

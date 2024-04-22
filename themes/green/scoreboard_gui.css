@@ -88,7 +88,7 @@
   #repertoire {
     color: yellow;
     list-style-type: none;
-    padding: 30px;
+    padding: 0 30px;
     margin: 0;
   }
 
@@ -150,6 +150,10 @@
   top: 0;
   height: 100vh;
 }
+  #tournamentHeadline {
+    margin-left: 2vw;
+    color: white;
+  }
 
   #fightlist {
     overflow-y: scroll;
