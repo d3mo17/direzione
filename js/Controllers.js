@@ -318,31 +318,36 @@ Direzione.ControlPanelController = (function () {
     function _registerUIEvents() {
         var remoteIndicator = document.getElementById('remoteIndicator')
 
-        this[' emitter'].on('establish', function () { remoteIndicator.className = 'on' })
+        this[' emitter'].on('establish',  function () { remoteIndicator.className = 'on' })
         this[' emitter'].on('disconnect', function () { remoteIndicator.className = 'off' })
 
+        // click to connect to remote scoreboard
         remoteIndicator.addEventListener('click', function (event) {
             return _avoidControl.call(this) ||
                     this[' emitter'].isConnected() && this[' emitter'].disconnect() ||
                     this[' emitter'].connect()
         }.bind(this))
 
+        // catch clicks in fight list view
         document.getElementById('repertoire').addEventListener('click', function (evt) {
             var fight = evt.target.parentNode.fight
 
             if (_avoidControl.call(this)) return
             if (typeof fight !== 'undefined') {
+                // click to open fight history
                 if (evt.target.matches('img.history')) {
                     _dispatch.call(this, 'fightHistoryTrigger', fight)
                     return
                 }
 
+                // select clicked fight element from list and place indicator of selected fight
                 _deselectRepertoire.call(this)
                 evt.target.parentNode.classList.add('selected')
                 _dispatch.call(this, 'fightChange', fight)
             }
         }.bind(this))
 
+        // click to open settings administration popup layer
         document.querySelector('#menue .settings').addEventListener('click', function (evt) {
             if (_avoidControl.call(this)) return
             document.getElementById('settings').style.display = 'block'
@@ -353,9 +358,10 @@ Direzione.ControlPanelController = (function () {
             }
         }.bind(this))
 
+        // click to close popup layer for settings administration
         document.querySelector('#settings .close').addEventListener('click', function (evt) {
-          document.getElementById('settings').style.display = 'none'
-          Direzione.State.keyControlScoreboard = true
+            document.getElementById('settings').style.display = 'none'
+            Direzione.State.keyControlScoreboard = true
         }.bind(this))
     }
 
@@ -475,6 +481,12 @@ Direzione.OpponentsController = (function (OpponentGroup, Person, RoundRobinTour
      * @param      {ViewTranslator} translator
      */
     function OpponentsController(tournament, repertoire, viewConfig, translator) {
+        tournament.on('repose', function () {
+            localStorage.setItem(
+                _getTournamentStorageKey(this.getName()),
+                JSON.stringify(this.toStruct())
+            )
+        }.bind(tournament))
         this[' groups']     = []
         this[' tournament'] = tournament
         this[' repertoire'] = repertoire
@@ -669,8 +681,12 @@ Direzione.OpponentsController = (function (OpponentGroup, Person, RoundRobinTour
             .forEach(_addTournamentElement.bind(this));
     }
 
+    function _getTournamentStorageKey(name) {
+        return 'tournament.' + name
+    }
+
     function _addTournamentElement(name) {
-        var storageKey = 'tournament.' + name
+        var storageKey = _getTournamentStorageKey(name)
         var tournamentEntryElem = this[' tournamentEntryJig'].cloneNode(true)
 
         tournamentEntryElem.storageKey = storageKey
@@ -681,17 +697,44 @@ Direzione.OpponentsController = (function (OpponentGroup, Person, RoundRobinTour
         return storageKey
     }
 
+    function _personsFromGroups(groups) {
+        return groups.reduce(function (persons, group) {
+            group.getPersons().forEach(function (person) {
+                persons[person.getUUID()] = person
+            })
+            return persons
+        }, {})
+    }
+
+    function _groupsFromStruct(groupStruct) {
+        return groupStruct.map(function (groupData) {
+            var group = OpponentGroup.create(groupData.name)
+            groupData.persons.forEach(function (personStruct) {
+                group.addPerson(Person.create(
+                    personStruct.firstName,
+                    personStruct.lastName,
+                    personStruct.club,
+                    personStruct.uuid
+                ))
+            })
+
+            return group
+        })
+    }
+
     /**
      * @private
      * @param {Object} viewConfig
      */
     function _registerUIEvents (viewConfig) {
+        // click on button to add a group
         viewConfig.buttonElemAddGroupName.addEventListener('click', function (evt) {
             evt.preventDefault()
             evt.stopPropagation()
             _createGroup.call(this, viewConfig.inputElemGroupName.value)
         }.bind(this))
 
+        // click on button to add a person to a group
         viewConfig.buttonElemAddPerson.addEventListener('click', function (evt) {
             evt.preventDefault()
             evt.stopPropagation()
@@ -705,6 +748,7 @@ Direzione.OpponentsController = (function (OpponentGroup, Person, RoundRobinTour
             _persistGroups.call(this)
         }.bind(this))
 
+        // click on button to build tournament
         viewConfig.buttonElemBuildTournament.addEventListener('click', function(evt) {
             var pl = this[' tournament'].getPlaylist()
             var name = viewConfig.inputElemTournamentName.value
@@ -725,6 +769,7 @@ Direzione.OpponentsController = (function (OpponentGroup, Person, RoundRobinTour
             this[' repertoire'].refresh()
         }.bind(this))
 
+        // click to open group and tournament management
         document.querySelector('#menue .opponents').addEventListener('click', function (evt) {
             Direzione.State.keyControlScoreboard = false
             document.getElementById('groups').style.display = 'block'
@@ -743,17 +788,24 @@ Direzione.OpponentsController = (function (OpponentGroup, Person, RoundRobinTour
                 }.bind(this))
         }.bind(this))
 
+        // click on close button of popuplayer for managing groups
         document.querySelector('#groups .close').addEventListener('click', function (evt) {
             Direzione.State.keyControlScoreboard = true
             document.getElementById('groups').style.display = 'none'
             document.getElementById('persons').style.display = 'none'
         })
 
+        // click on close button of popuplayer for adding persons to groups
         document.querySelector('#persons .close').addEventListener('click', function (evt) {
             document.getElementById('persons').style.display = 'none'
         })
 
+        // Tournament list element click listener
         this[' tournamentWrapperElem'].addEventListener('click', function (evt) {
+            evt.preventDefault()
+            evt.stopPropagation()
+
+            // remove button
             if (evt.target.matches('img.tournament.remove')) {
                 this[' translator'].getTranslations()
                     .then(function (translation) {
@@ -767,13 +819,37 @@ Direzione.OpponentsController = (function (OpponentGroup, Person, RoundRobinTour
                     }.bind(this))
             }
 
+            // click on tournament name
             if (evt.target.matches('#tournamentList .label')) {
                 var listElem = evt.target.parentNode
                 var tournamentJSON = localStorage.getItem(listElem.storageKey)
                 var tournament = JSON.parse(tournamentJSON)
 
-                _clearGroups.apply(this)
+                var groups  = _groupsFromStruct(tournament.groups)
+                var persons = _personsFromGroups(groups)
 
+                this[' tournament'].getPlaylist().empty()
+                tournament.playlist.forEach(function (fightData) {
+                    var fight = this[' tournament'].addFight(
+                        persons[fightData.whiteOpponent.personUUID],
+                        persons[fightData.redOpponent.personUUID]
+                    )
+                    fight[' stopped'] = fightData.stopped
+                    fight.setTimeLeft(fightData.timeLeft)
+
+                    fight.getWhiteOpponent()[' score']   = fightData.whiteOpponent.score
+                    fight.getWhiteOpponent()[' penalty'] = fightData.whiteOpponent.shido
+                    fight.getRedOpponent()[' score']     = fightData.redOpponent.score
+                    fight.getRedOpponent()[' penalty']   = fightData.redOpponent.shido
+
+                    fight.getHistory()[' log'] = fightData.history
+                }.bind(this))
+                this[' tournament'].setName(tournament.name)
+                this[' tournament'].setGroups(groups)
+
+                this[' repertoire'].refresh()
+
+                _clearGroups.apply(this)
                 localStorage.setItem('groups', JSON.stringify(tournament['groups']))
                 _restoreGroups.apply(this)
             }
